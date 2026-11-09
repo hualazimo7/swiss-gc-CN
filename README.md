@@ -1,5 +1,8 @@
 # Swiss 简体中文版 + 游戏内复位（swiss-gc-CN）
 
+> ⚠️ **禁止商业使用 / NON-COMMERCIAL USE ONLY**：本仓库的原创内容仅限非商业用途，禁止出售、预装到售卖的硬件/存储卡、付费代刷、广告变现等。详见 [LICENSE](LICENSE) 与 [NOTICE.md](NOTICE.md)。
+> 上游 Swiss / GNU Unifont 的 GPL-2.0 材料不受此限制（见 [LICENSE-GPL-2.0.txt](LICENSE-GPL-2.0.txt)）。
+
 [Swiss](https://github.com/emukidid/swiss-gc) 是 GameCube 的全能自制程序加载器。本仓库收录基于上游 **r2154 / commit `62a8b9a2`** 的**简体中文构建**，以及与之**严格配套**的游戏内复位（IGR / Apploader）文件。
 
 > 这两个东西必须成对使用：`apploader.img` 内嵌了本次编译的汉化 Swiss 本体，换固件不换它（或反过来）都会导致复位后黑屏、反复重启或回到英文原版。
@@ -134,7 +137,10 @@ docs/        IGR 原理、汉化实现、游戏名中文化、译名表、实机
 
 ## 许可与致谢
 
-- 上游 Swiss：[emukidid/swiss-gc](https://github.com/emukidid/swiss-gc)，GPL-2.0，详见 [`LICENSE`](LICENSE) 与 [`UPSTREAM.txt`](UPSTREAM.txt)
-- 本仓库的翻译、工具与文档同样以 GPL-2.0 发布
-- 字体数据来自 [GNU Unifont](https://unifoundry.com/unifont/)（GPL-2.0+ 及字体例外）
+> ⚠️ 本仓库**原创内容禁止商业使用**；上游 GPL-2.0 材料不受此限制。完整条款见
+> [`LICENSE`](LICENSE)，范围界定与商用示例见 [`NOTICE.md`](NOTICE.md)。
+
+- **本项目原创贡献**（翻译表、构建/校验工具、文档、离线包中文材料、截图）：《非商业使用许可 v1.0》，**禁止商用**
+- **上游 Swiss**：[emukidid/swiss-gc](https://github.com/emukidid/swiss-gc)，GPL-2.0，全文见 [`LICENSE-GPL-2.0.txt`](LICENSE-GPL-2.0.txt)，版本信息见 [`UPSTREAM.txt`](UPSTREAM.txt)。`firmware/*.dol` 与 `igr/apploader.img` 为该许可下的衍生作品，可依 GPL-2.0 使用（含商业使用）
+- **字体**：[GNU Unifont](https://unifoundry.com/unifont/)，GPL-2.0+ 及字体例外
 - 配套 PC 工具：[swiss-gc-Imager](https://github.com/hualazimo7/swiss-gc-Imager)（背景图）、[swiss-gc-ftp](https://github.com/hualazimo7/swiss-gc-ftp)（文件传输）
