@@ -62,9 +62,9 @@ SD:\swiss\patches\apploader.img
 
 | 文件 | 大小 | SHA-256（前 16 位） |
 |---|---:|---|
-| `firmware/swiss.dol` | 1,021,760 B | `567110592319ce88` |
-| `firmware/swiss-wiiload.dol` | 3,241,216 B | `7799a48591382a1c` |
-| `igr/apploader.img` | 1,027,200 B | `d55d5a7df19c0a82` |
+| `firmware/swiss.dol` | 1,027,104 B | `2a52fd27c085b335` |
+| `firmware/swiss-wiiload.dol` | 3,245,600 B | `73b13affe9e564e3` |
+| `igr/apploader.img` | 1,026,880 B | `3e9b6e29b434653b` |
 
 `apploader.img` 的版本标记为 `*swiss_r2154.dol`，与 SD 卡根目录的 `IPL.dol` 内嵌同一份 `executable.xz`。
 

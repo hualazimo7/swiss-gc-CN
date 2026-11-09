@@ -1,5 +1,13 @@
 # 更新记录
 
+## 2026-11-09 — 统一汉字与拉丁字符的视觉大小
+
+- 实机反馈：英文字母和数字比汉字大一圈。根因是汉字走 16px 点阵字库、拉丁字符走 IPL 原生字体，cap height 相差约 2px
+- `IPLFontWrite.c` 新增 `LATIN_FIT`：**仅对含中文的字符串**把拉丁字形等比收缩，纯英文行（时钟、commit 行、启动信息）保持原样
+- 同步修正 `GetTextSizeInPixels` / `GetCharsThatFitInWidth` / `GetTextScaleToFitInWidth` 等测宽路径，避免截断和居中偏移
+- 0.875 与 0.85 两档实机对比后选定 **0.85**
+- 固件与 `apploader.img` 已按新源码重新编译，两者仍严格配套；离线包、截图与校验值同步更新
+
 ## 2026-11-09 — README 增加爱发电赞助入口
 
 - 主页标题下新增赞助按钮（本地静态 SVG `docs/afdian-sponsor.svg`，暖黄「请我喝一杯咖啡」+ 咖啡杯图形），点击跳转 <https://ifdian.net/a/hualazimo7>
