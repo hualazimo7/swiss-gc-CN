@@ -2,7 +2,8 @@
 
 ## 2026-11-09 — README 增加爱发电赞助入口
 
-- 主页标题下新增爱发电徽章（shields.io + 官方 AFDIAN 图形），点击跳转 <https://ifdian.net/a/hualazimo7>
+- 主页标题下新增赞助按钮（本地静态 SVG `docs/afdian-sponsor.svg`，暖黄「请我喝一杯咖啡」+ 咖啡杯图形），点击跳转 <https://ifdian.net/a/hualazimo7>
+- 按钮不依赖 shields.io 等外部图床，离线/内网环境也能正常显示
 - 赞助属自愿打赏，**不构成商业授权**，不改变 [`LICENSE`](LICENSE) 的非商业条款
 
 ## 2026-11-09 — 增加禁止商用许可（非商业使用许可 v1.0）

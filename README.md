@@ -1,8 +1,8 @@
 # Swiss 简体中文版 + 游戏内复位（swiss-gc-CN）
 
 <p align="center">
-  <a href="https://ifdian.net/a/hualazimo7" title="在爱发电赞助本项目">
-    <img src="https://img.shields.io/badge/%E7%88%B1%E5%8F%91%E7%94%B5-%E8%B5%9E%E5%8A%A9%E6%88%91-946ce6?style=for-the-badge&logo=afdian&logoColor=white&labelColor=7a55d1" alt="爱发电 · 赞助我" height="28">
+  <a href="https://ifdian.net/a/hualazimo7" title="在爱发电请我喝一杯咖啡">
+    <img src="docs/afdian-sponsor.svg" alt="请我喝一杯咖啡 · 爱发电" height="44">
   </a>
 </p>
 

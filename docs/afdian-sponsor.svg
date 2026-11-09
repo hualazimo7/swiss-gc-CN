@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="64" viewBox="0 0 320 64" role="img" aria-label="请我喝一杯咖啡 · 爱发电" font-family="system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Segoe UI', sans-serif">
+  <title>请我喝一杯咖啡 · 爱发电</title>
+  <desc>暖黄色赞助按钮，点击前往爱发电支持本项目</desc>
+  <rect x="0" y="0" width="320" height="64" rx="14" fill="#FFDD00"/>
+  <g transform="translate(26,20)" fill="none" stroke="#2C1A0E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9h18v9a7 7 0 0 1-7 7h-4a7 7 0 0 1-7-7z"/>
+    <path d="M21 12h2.5a3.5 3.5 0 0 1 0 7H21"/>
+    <path d="M8 3v3M13 2v4M18 3v3"/>
+  </g>
+  <text x="66" y="40" font-size="19" font-weight="500" fill="#2C1A0E">请我喝一杯咖啡</text>
+  <text x="238" y="39" font-size="13" fill="#2C1A0E" opacity="0.62">爱发电</text>
+</svg>
