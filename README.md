@@ -1,5 +1,11 @@
 # Swiss 简体中文版 + 游戏内复位（swiss-gc-CN）
 
+<p align="center">
+  <a href="https://ifdian.net/a/hualazimo7" title="在爱发电赞助本项目">
+    <img src="https://img.shields.io/badge/%E7%88%B1%E5%8F%91%E7%94%B5-%E8%B5%9E%E5%8A%A9%E6%88%91-946ce6?style=for-the-badge&logo=afdian&logoColor=white&labelColor=7a55d1" alt="爱发电 · 赞助我" height="28">
+  </a>
+</p>
+
 > ⚠️ **禁止商业使用 / NON-COMMERCIAL USE ONLY**：本仓库的原创内容仅限非商业用途，禁止出售、预装到售卖的硬件/存储卡、付费代刷、广告变现等。详见 [LICENSE](LICENSE) 与 [NOTICE.md](NOTICE.md)。
 > 上游 Swiss / GNU Unifont 的 GPL-2.0 材料不受此限制（见 [LICENSE-GPL-2.0.txt](LICENSE-GPL-2.0.txt)）。
 
