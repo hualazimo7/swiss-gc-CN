@@ -1,0 +1,288 @@
+{
+  "host": "192.168.1.2",
+  "dir": "sdb:/root/game/GameCube",
+  "created": "2026-11-09T09:41:09",
+  "applied": [
+    {
+      "old": "Capcom vs. SNK 2 EO (USA).nkit.iso",
+      "new": "卡普空对SNK2 极限进攻.nkit.iso",
+      "size": 294946816
+    },
+    {
+      "old": "Dragon Ball Z - Budokai 2 (USA).nkit.iso",
+      "new": "龙珠Z-武道会2.nkit.iso",
+      "size": 1179488256
+    },
+    {
+      "old": "DreamWorks Over the Hedge (Europe).nkit.iso",
+      "new": "篱笆墙外.nkit.iso",
+      "size": 1274771456
+    },
+    {
+      "old": "Fantastic 4 (USA).nkit.iso",
+      "new": "神奇四侠.nkit.iso",
+      "size": 1439801344
+    },
+    {
+      "old": "FireBlade (USA).nkit.iso",
+      "new": "火刃.nkit.iso",
+      "size": 1071638528
+    },
+    {
+      "old": "Game Boy Player Start-Up Disc (USA) (v1.02) Lite.iso",
+      "new": "Game Boy 播放器启动盘（精简版）.iso",
+      "size": 2451232
+    },
+    {
+      "old": "Game Boy Player Start-Up Disc.iso",
+      "new": "Game Boy 播放器启动盘.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Hudson Selection Vol. 4 - Takahashi-Meijin no Boukenjima (Japan).nkit.iso",
+      "new": "哈德森精选集4-高桥名人之冒险岛.nkit.iso",
+      "size": 327432192
+    },
+    {
+      "old": "Ice Age 2 - The Meltdown (USA).nkit.iso",
+      "new": "冰川时代2-融冰之灾.nkit.iso",
+      "size": 1046716416
+    },
+    {
+      "old": "Intellivision Lives! (USA).nkit.iso",
+      "new": "Intellivision 经典游戏合集.nkit.iso",
+      "size": 844175360
+    },
+    {
+      "old": "Legend of Zelda, The - Collector's Edition (USA).nkit.iso",
+      "new": "塞尔达传说-典藏版.nkit.iso",
+      "size": 1286995968
+    },
+    {
+      "old": "Legend of Zelda, The - Ocarina of Time & Master Quest (USA).iso",
+      "new": "塞尔达传说-时之笛与大师任务.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Lord of the Rings, The - The Two Towers (USA).nkit.iso",
+      "new": "指环王-双塔奇兵.nkit.iso",
+      "size": 1416546304
+    },
+    {
+      "old": "Luigi's Mansion (USA).nkit.iso",
+      "new": "路易吉洋馆.nkit.iso",
+      "size": 195696640
+    },
+    {
+      "old": "Mario Kart - Double Dash!! (USA).nkit.iso",
+      "new": "马里奥赛车-双重冲刺.nkit.iso",
+      "size": 490999808
+    },
+    {
+      "old": "Mario Party 5 (USA).nkit.iso",
+      "new": "马里奥聚会5.nkit.iso",
+      "size": 997883904
+    },
+    {
+      "old": "Mario Party 6 (USA).nkit.iso",
+      "new": "马里奥聚会6.nkit.iso",
+      "size": 787918848
+    },
+    {
+      "old": "Medabots Infinity (USA).nkit.iso",
+      "new": "徽章战士-无限.nkit.iso",
+      "size": 417171456
+    },
+    {
+      "old": "Mega Man Anniversary Collection (USA) (Rev 1).nkit.iso",
+      "new": "洛克人周年纪念合集.nkit.iso",
+      "size": 1435707392
+    },
+    {
+      "old": "Metal Gear Solid - The Twin Snakes (Japan) (En,Ja) (Disc 1).nkit.iso",
+      "new": "合金装备-双蛇（第1张）.nkit.iso",
+      "size": 1304332288
+    },
+    {
+      "old": "Metal Gear Solid - The Twin Snakes (Japan) (En,Ja) (Disc 2).nkit.iso",
+      "new": "合金装备-双蛇（第2张）.nkit.iso",
+      "size": 1387923456
+    },
+    {
+      "old": "Midway Arcade Treasures (USA).nkit.iso",
+      "new": "街机珍宝合集.nkit.iso",
+      "size": 1132496896
+    },
+    {
+      "old": "Midway Arcade Treasures 2 (USA).nkit.iso",
+      "new": "街机珍宝合集2.nkit.iso",
+      "size": 1392113664
+    },
+    {
+      "old": "Mortal Kombat - Deception (USA).nkit.iso",
+      "new": "真人快打-欺骗.nkit.iso",
+      "size": 1384226816
+    },
+    {
+      "old": "Namco Museum (USA).nkit.iso",
+      "new": "南梦宫博物馆.nkit.iso",
+      "size": 660975616
+    },
+    {
+      "old": "NBA Live 06 (USA).iso",
+      "new": "劲爆美国职篮06.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Need for Speed - Most Wanted (USA).iso",
+      "new": "极品飞车-最高通缉.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Need for Speed - Underground 2 (USA).iso",
+      "new": "极品飞车-地下狂飙2.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Nick Jr. Dora the Explorer - Journey to the Purple Planet (USA).nkit.iso",
+      "new": "爱探险的朵拉-紫色星球之旅.nkit.iso",
+      "size": 1452396544
+    },
+    {
+      "old": "Prince of Persia - The Sands of Time (USA) (En,Fr,Es).nkit.iso",
+      "new": "波斯王子-时之砂.nkit.iso",
+      "size": 1429821440
+    },
+    {
+      "old": "Resident Evil 4 (USA) (Disc 1).nkit.iso",
+      "new": "生化危机4（美版 第1张）.nkit.iso",
+      "size": 1432616960
+    },
+    {
+      "old": "Resident Evil 4 (USA) (Disc 2).nkit.iso",
+      "new": "生化危机4（美版 第2张）.nkit.iso",
+      "size": 1298300928
+    },
+    {
+      "old": "Shonen Jump's One Piece - Grand Adventure (USA).iso",
+      "new": "海贼王-伟大冒险.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Simpsons, The - Hit & Run (USA).iso",
+      "new": "辛普森一家-横冲直撞.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Sonic Gems Collection (USA).iso",
+      "new": "索尼克宝石合集.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Sonic Heroes (USA) (En,Ja,Fr,De,Es,It).iso",
+      "new": "索尼克英雄.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Soulcalibur II (USA).iso",
+      "new": "灵魂能力2.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Spawn - Armageddon (USA).nkit.iso",
+      "new": "再生侠-末日.nkit.iso",
+      "size": 952391680
+    },
+    {
+      "old": "Star Fox - Assault (USA).iso",
+      "new": "星际火狐-突击.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Star Fox Adventures (USA).iso",
+      "new": "星际火狐大冒险.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Super Monkey Ball (USA).nkit.iso",
+      "new": "超级猴子球.nkit.iso",
+      "size": 503656448
+    },
+    {
+      "old": "Super Smash Bros. Melee (USA) (En,Ja) (Rev 1).nkit.iso",
+      "new": "任天堂明星大乱斗DX.nkit.iso",
+      "size": 1430818816
+    },
+    {
+      "old": "Tales of Symphonia (USA) (Disc 2).nkit.iso",
+      "new": "仙乐传说（第2张）.nkit.iso",
+      "size": 1395918848
+    },
+    {
+      "old": "Teenage Mutant Ninja Turtles (USA).nkit.iso",
+      "new": "忍者神龟.nkit.iso",
+      "size": 1417744384
+    },
+    {
+      "old": "Teenage Mutant Ninja Turtles 2 - Battle Nexus (USA) (Disc 1).iso",
+      "new": "忍者神龟2-战斗枢纽（第1张）.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Teenage Mutant Ninja Turtles 2 - Battle Nexus (USA) (Disc 2).iso",
+      "new": "忍者神龟2-战斗枢纽（第2张）.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "TMNT - Mutant Melee (USA).iso",
+      "new": "忍者神龟-变种格斗.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Tom and Jerry in War of the Whiskers (USA).nkit.iso",
+      "new": "猫和老鼠-胡须大战.nkit.iso",
+      "size": 204996608
+    },
+    {
+      "old": "Tom Clancy's Splinter Cell - Pandora Tomorrow (USA) (Rev 1).nkit.iso",
+      "new": "细胞分裂-明日潘多拉.nkit.iso",
+      "size": 1317312512
+    },
+    {
+      "old": "Ultimate Spider-Man (USA).iso",
+      "new": "终极蜘蛛侠.iso",
+      "size": 1459978240
+    },
+    {
+      "old": "Viewtiful Joe 2 (USA).nkit.iso",
+      "new": "红侠乔伊2.nkit.iso",
+      "size": 830779392
+    },
+    {
+      "old": "Wario World (USA).nkit.iso",
+      "new": "瓦力欧世界.nkit.iso",
+      "size": 269649920
+    },
+    {
+      "old": "WarioWare, Inc. - Mega Party Game$! (USA).nkit.iso",
+      "new": "瓦力欧制造-超级派对.nkit.iso",
+      "size": 888039424
+    },
+    {
+      "old": "Worms 3D (USA) (En,Fr).nkit.iso",
+      "new": "百战天虫3D.nkit.iso",
+      "size": 1021736960
+    },
+    {
+      "old": "Worms Blast (USA) (En,Fr,Es).nkit.iso",
+      "new": "百战天虫-爆破.nkit.iso",
+      "size": 575641600
+    },
+    {
+      "old": "swiss document.txt",
+      "new": "Swiss 使用说明.txt",
+      "size": 140
+    }
+  ],
+  "finished": "2026-11-09T09:42:03"
+}

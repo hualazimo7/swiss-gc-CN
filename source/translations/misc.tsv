@@ -1,0 +1,54 @@
+﻿# Swiss 汉化映射表 — 其余文件（设备 / 镜像 / 金手指 / 音乐播放）
+
+# —— 设备检测与状态 ——
+Initialising Network	正在初始化网络
+Detecting devices…\nThis can be skipped by holding B next time	正在检测设备…\n下次可长按 B 跳过
+DVD Initializing	光驱初始化中
+Resetting DVD drive - Detect Media	正在复位光驱 - 检测介质
+Possible DVD Backup - Enabling Patches	检测到 DVD 备份盘 - 启用补丁
+One moment, setting up audio streaming.	请稍候，正在设置音频流。
+Unknown %08X	未知 %08X
+Reading directory	正在读取目录
+Reading Qoob	正在读取 Qoob
+Reading WODE	正在读取 WODE
+Reading filesystem info for ftp:/	正在读取 ftp:/ 的文件系统信息
+Reading filesystem info for smb:/	正在读取 smb:/ 的文件系统信息
+Waiting for PC…	等待 PC…
+No WODE found! Press A	未找到 WODE！按 A
+
+# —— 镜像读写 ——
+Reading File %i/%i\n%s [%iKB]	正在读取文件 %i/%i\n%s [%iKB]
+Writing File %i/%i\n%s [%iKB]	正在写入文件 %i/%i\n%s [%iKB]
+Patching File %i/%i\n%s [%iKB]	正在修补文件 %i/%i\n%s [%iKB]
+Failed to read Apploader Header	读取 Apploader 头失败
+Failed to read Main DOL Header	读取主 DOL 头失败
+No writable device available.\nAn SD Card Adapter is necessary in order\nfor patches to survive application restart.	没有可写设备。\n需要 SD 卡适配器，\n补丁才能在重启后保留。
+
+# —— 固件更新提示 ——
+A firmware update is available.\nflippydrive.com/updates	有可用的固件更新。\nflippydrive.com/updates
+A firmware update is required.\nflippydrive.com/updates	需要更新固件。\nflippydrive.com/updates
+A firmware update is available.\ngc-loader.com/firmware-updates	有可用的固件更新。\ngc-loader.com/firmware-updates
+A firmware update is available.\ngc-loader.com/firmware-updates-hw2	有可用的固件更新。\ngc-loader.com/firmware-updates-hw2
+
+# —— 其它启动/提示 ——
+Please move %s to Slot B	请将 %s 插入插槽 B
+You can set “System Boot Mode” to Production\nto restore the GameCube logo screen.	可将“系统启动模式”设为“正式版”\n以恢复 GameCube 开机标志。
+
+# —— WKF / WASP ——
+Firmware flashing in progress. Do NOT Power Off !!	正在烧录固件，切勿断电！
+Menu flashing in progress. Do NOT Power Off !!	正在烧录菜单，切勿断电！
+No SD Card	无 SD 卡
+SD Card detected but failed to initialise.\nPlease try again	检测到 SD 卡但初始化失败。\n请重试
+Invalid WKF/WASP Switch config detected: [0x%08X]	检测到无效的 WKF/WASP 开关配置：[0x%08X]
+This will cause slowdown in games!	这会导致游戏变慢！
+Please set SW3 & SW4 to ON to fix this	请将 SW3 与 SW4 拨到 ON 以修复
+
+# —— 金手指 ——
+No cheats file found.\nPress A to continue.	未找到金手指文件。\n按 A 继续。
+Empty or unreadable cheats file found.\nPress A to continue.	金手指文件为空或无法读取。\n按 A 继续。
+
+# —— MP3 播放器 ——
+%s -  Volume (%i%%)	%s -  音量 (%i%%)
+(<-) Rewind (->) Forward (X) Vol+ (Y) Vol-	(<-) 后退 (->) 前进 (X) 音量+ (Y) 音量-
+(B) Stop (L) Prev (R) Next (Start) Pause	(B) 停止 (L) 上一首 (R) 下一首 (Start) 暂停
+Shuffle is currently %s press (Z) to toggle	随机播放当前 %s，按 (Z) 切换

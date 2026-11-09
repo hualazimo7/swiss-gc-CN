@@ -1,0 +1,30 @@
+﻿# Swiss 汉化映射表 — 设置取值（显示用）
+# 注意：Yes/No/Default/Production/Stereo/Mono 会写入 swiss.ini，保持英文不动。
+
+On	开
+Off	关
+Auto	自动
+None	无
+Disabled	禁用
+Enabled	启用
+Unused	未使用
+Forced	强制
+Reboot	重启
+Lazy	延迟
+Standard	标准
+Fullwidth	全宽
+Carousel	轮播
+Slot A	插槽 A
+Slot B	插槽 B
+Slot A&B	插槽 A 和 B
+Serial Port 2	串口 2
+on (4:3)	开 (4:3)
+
+English	英语
+German	德语
+French	法语
+Spanish	西班牙语
+Italian	意大利语
+Dutch	荷兰语
+Japanese	日语
+English (US)	英语（美国）

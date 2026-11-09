@@ -1,0 +1,18 @@
+﻿# Swiss 汉化映射表 — 拼接式与遗漏的界面文本
+# 注意：前后空格是拼接用的，必须保留
+
+# —— 全宽浏览底部状态栏（stpcpy 拼接）——
+Total: 	总计 
+ | Free: 	 | 可用 
+ | Used: 	 | 已用 
+Used: 	已用 
+Size: 	大小 
+
+# —— 条目操作提示（stpcpy 拼接）——
+(X) Settings · (Y) Cheats	(X) 设置 · (Y) 金手指
+ · (B) Exit	 · (B) 退出
+ · (A) Clean Boot	 · (A) 纯净启动
+ · (A) Boot	 · (A) 启动
+
+# —— 文件列表 ——
+Up to parent directory	返回上级目录

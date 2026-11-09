@@ -1,0 +1,41 @@
+﻿# 设备层错误描述（出错时显示在消息框里）
+A hard error occurred in the low level disk I/O layer	底层磁盘 I/O 发生硬错误
+Assertion failed	断言失败
+The physical drive does not work	物理驱动器无法工作
+Could not find the file	找不到文件
+Could not find the path	找不到路径
+The path name format is invalid	路径名格式无效
+Access denied due to a prohibited access or directory full	拒绝访问：权限受限或目录已满
+Access denied due to a prohibited access	拒绝访问：权限受限
+The file/directory object is invalid	文件/目录对象无效
+The physical drive is write protected	物理驱动器处于写保护
+The logical drive number is invalid	逻辑驱动器号无效
+The volume has no work area	卷没有可用工作区
+Could not find a valid FAT volume	找不到有效的 FAT 卷
+The f_mkfs function aborted due to some problem	f_mkfs 因故中止
+Could not take control of the volume within defined period	在限定时间内无法取得卷控制权
+The operation is rejected according to the file sharing policy	操作被文件共享策略拒绝
+LFN working buffer could not be allocated or given buffer is insufficient in size	长文件名缓冲区分配失败或容量不足
+Number of open files > FF_FS_LOCK	打开的文件数超过上限
+Given parameter is invalid	参数无效
+Unknown error occurred	发生未知错误
+# 网络设备
+Check FTP Configuration	请检查 FTP 配置
+Error connecting to FTP server	连接 FTP 服务器失败
+Check SMB Configuration	请检查 SMB 配置
+Error connecting to SMB share	连接 SMB 共享失败
+Check FSP Configuration	请检查 FSP 配置
+Network has not been initialised	网络尚未初始化
+# 记忆卡
+Memory Card Busy	记忆卡忙
+Inserted device is not a memory card	插入的设备不是记忆卡
+No Card Inserted	未插入记忆卡
+File does not exist	文件不存在
+Fatal error	致命错误
+# 光驱
+Lid open	光驱盖已打开
+No disk	无光盘
+No disk/Disk changed	无光盘/已换盘
+Motor off	电机已停止
+Disk not initialized	光盘未初始化
+Unknown error	未知错误

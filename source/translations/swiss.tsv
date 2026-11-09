@@ -1,0 +1,89 @@
+﻿# Swiss 汉化映射表 — swiss.c 提示与消息
+# 格式：英文原文<TAB>中文译文；\n 表示换行（工具会还原）
+
+# —— 加载 / 保存 ——
+Saving autoload…	正在保存自启动配置…
+Saving recent list…	正在保存最近列表…
+Loading DOL	正在加载 DOL
+Loading DOL\nDo not remove %s	正在加载 DOL\n请勿拔出 %s
+Loading BS2	正在加载 BS2
+Loading BS2\nDo not remove %s	正在加载 BS2\n请勿拔出 %s
+Reading…	正在读取…
+Reading Flash File…	正在读取闪存文件…
+Deleting…	正在删除…
+Verifying…	正在校验…
+Checking Game…	正在检查游戏…
+Setting up device	正在初始化设备
+Setup base offset please Wait…	正在设置基准偏移，请稍候…
+Resetting RP2040	正在复位 RP2040
+Flashing Complete !!	烧录完成！
+Found firmware file, this will be flashed too.	找到固件文件，将一并烧录。
+Didn't find a firmware file, flashing menu only.	未找到固件文件，仅烧录菜单。
+
+# —— 文件操作提示 ——
+Copy Complete.\nPress A to continue	复制完成。\n按 A 继续
+Copying to: %s	正在复制到：%s
+Move Complete!	移动完成！
+Move Failed! Press A to continue	移动失败！按 A 继续
+%s cancelled.\nPress A to continue	%s 已取消。\n按 A 继续
+%s renamed!\nPress A to continue.	%s 已重命名！\n按 A 继续。
+%s %s\nPress A to continue.	%s %s\n按 A 继续。
+File exists:	文件已存在：
+Rename	重命名
+Delete confirmation required.\n \nPress L + A to continue, or B to cancel.	需要确认删除。\n \n按 L + A 继续，或按 B 取消。
+Too many copies!	复制数量过多！
+File name too long!	文件名过长！
+Can't overwrite a file with itself!	不能用文件覆盖自身！
+Can't load device while HTTP is processing!	HTTP 处理中，无法加载设备！
+Unknown File Type!	未知文件类型！
+Enter directory and press X	进入目录后按 X
+Select DOL or Press B to boot normally	选择 DOL，或按 B 正常启动
+Select time zone	选择时区
+
+# —— 错误与校验 ——
+Invalid or Corrupt File!	文件无效或已损坏！
+Invalid or Corrupt File! (Fake SD Card?)	文件无效或已损坏！（扩容卡？）
+Invalid DOL	DOL 无效
+Failed to Read! (%d %d)\n%s	读取失败！(%d %d)\n%s
+Failed to Write! (%d %d)\n%s	写入失败！(%d %d)\n%s
+Failed to Write! (%d)\n%s	写入失败！(%d)\n%s
+Failed to setup the file (too fragmented?)	文件建立失败（碎片过多？）
+Failed to init destination device! (%u)\nPress A to continue.	目标设备初始化失败！(%u)\n按 A 继续。
+Failed to read DOL. Press A.	读取 DOL 失败。按 A。
+DOL is corrupted. Press A.	DOL 已损坏。按 A。
+DOL is too big. Press A.	DOL 过大。按 A。
+Passed verification!\nPress A to continue.	校验通过！\n按 A 继续。
+Failed verification!\nPress A to continue.	校验失败！\n按 A 继续。
+Failed integrity check in patched file!\nPlease test %s for defects.	补丁文件完整性校验失败！\n请测试 %s 是否有缺陷。
+File Size must be 0x1D0000 bytes!	文件大小必须为 0x1D0000 字节！
+A firmware update is required.	需要更新固件。
+
+# —— 设备能力提示 ——
+Device does not support audio streaming.\nThis may impact playability.	设备不支持音频流。\n可能影响可玩性。
+Device does not support clean boot.	设备不支持纯净启动。
+Device does not support disc images.	设备不支持光盘镜像。
+Device is operating in a degraded state.\nThis may impact playability.	设备处于降级状态。\n可能影响可玩性。
+
+# —— 镜像相关 ——
+Compressed disc images must be\ndecompressed using NKit or Dolphin.	压缩镜像必须使用\nNKit 或 Dolphin 解压。
+File is a bad dump and is not playable.\nPlease attempt recovery using NKit.	文件为错误转储，无法运行。\n请尝试用 NKit 修复。
+File is a bad dump, but may be playable.\nPlease attempt recovery using NKit.	文件为错误转储，但或许可运行。\n请尝试用 NKit 修复。
+File is not playable in NKit.iso format.\nPlease convert back to ISO using NKit.	NKit.iso 格式无法运行。\n请用 NKit 转换回 ISO。
+Please reconvert to NKit.iso using\nNKit bundled with this Swiss release.	请用本 Swiss 版本附带的\nNKit 重新转换为 NKit.iso。
+
+# —— 状态栏 / 提示键位 ——
+Press an option to continue, or B to return	请选择一项继续，或按 B 返回
+Manage %s:	管理 %s：
+(A) Rename (Z) Overwrite	(A) 重命名 (Z) 覆盖
+(R) Verify data integrity	(R) 校验数据完整性
+(X) EXI Options	(X) EXI 选项
+(Y) Show device details	(Y) 设备详情
+(Z) Show all devices	(Z) 显示全部设备
+Applied %i cheats	已应用 %i 项金手指
+Disc %i/%i [Found: %s]	光盘 %i/%i [已找到：%s]
+Game ID: [%.6s] Audio Streaming: [%s]	游戏 ID：[%.6s] 音频流：[%s]
+Revision %X	修订 %X
+Video Mode: %s	视频模式：%s
+Video Mode: %s\n%s Mode selected.	视频模式：%s\n已选择 %s 模式。
+Position on Card: %08X	卡内位置：%08X
+Position on Flash: %08X	闪存位置：%08X

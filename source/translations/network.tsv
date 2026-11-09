@@ -1,0 +1,25 @@
+﻿# 网络设置页字段与相关提示
+# 这些是 DrawGetTextEntry 的标题 / 提示文本，不参与配置解析
+IPv4 Address	IPv4 地址
+IPv4 Netmask	IPv4 子网掩码
+IPv4 Gateway	IPv4 网关
+FSP Host IP	FSP 主机 IP
+FSP Port	FSP 端口
+FSP Password	FSP 密码
+FSP Path MTU	FSP 路径 MTU
+FTP Host IP	FTP 主机 IP
+FTP Port	FTP 端口
+FTP Username	FTP 用户名
+FTP Password	FTP 密码
+SMB Host IP	SMB 主机 IP
+SMB Share	SMB 共享名
+SMB Username	SMB 用户名
+SMB Password	SMB 密码
+SNTP Host IP	SNTP 主机 IP
+RetroTINK-4K Host IP	RetroTINK-4K 主机 IP
+RetroTINK-4K Port	RetroTINK-4K 端口
+Flatten directory	展平目录
+Saving changes…	正在保存修改…
+In the GCVideo “Advanced Settings”\nmenu, set “Fix Resolution” to %s.	在 GCVideo 的“高级设置”\n菜单中，将“修复分辨率”设为 %s。
+In the “GCDigital Settings” menu,\nset “Use console DE” to %s.	在“GCDigital 设置”菜单中，\n将“使用主机 DE”设为 %s。
+Turning this on globally may cause certain\ngames to crash from resource exhaustion.	全局开启可能导致部分游戏\n因资源耗尽而崩溃。

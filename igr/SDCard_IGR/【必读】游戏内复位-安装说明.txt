@@ -1,0 +1,30 @@
+Swiss 游戏内复位（IGR / Apploader）配套文件
+==========================================
+
+本包由汉化版 Swiss 源码现场生成，版本标记：*swiss_r2154.dol
+apploader.img SHA-256：d55d5a7df19c0a824de6ef4b38ca65b47be32aceb741fc84f6737b21d7afb66c
+大小：1027200 字节
+
+【安装】
+把本目录下的 swiss 文件夹整个拷贝/合并到 SD 卡根目录，最终路径必须是：
+    SD:\swiss\patches\apploader.img
+（不要改文件名，不要放到子目录里。）
+
+【设置】
+Swiss → 设置 → 游戏全局 → 游戏内复位 → 选「Apploader」。
+配置文件里对应一行：IGRType=Apploader
+注意：apploader.img 要放在「启动这个游戏所用的设备」的 /swiss/patches/ 下。
+从 SD 卡启动就放 SD 卡；从 SMB/FTP 共享启动就放该共享根目录的同样位置。
+
+【使用】
+    A + Z + Start   → 退出游戏，回到 Swiss 主界面
+    R + Z + Start   → 重启当前游戏
+
+【重要】
+1. 这个文件内嵌了本次编译的汉化 Swiss（reboot.dol → executable.xz），
+   与 SD 卡根目录的 IPL.dol 是同一份源码的产物，两者版本必须一致。
+2. 绝对不要使用官方 / 开源 release 包里的 apploader.img：它内嵌的是
+   另一份 Swiss，复位后会黑屏、反复重启，或回到英文原版。
+3. 每次重新编译/升级 Swiss 之后，都要重新生成并覆盖这个文件。
+   生成命令：build-local.bat apploader
+   校验/打包：python tools/build_apploader.py --build

@@ -1,0 +1,19 @@
+﻿# swiss.c 剩余的提示与操作文本
+# 注意：字面量必须带上下文里的前后空格，拼接后才不会粘连
+Supports Game Boot & Audio Streaming	支持游戏启动与音频流
+Supports Game Boot	支持游戏启动
+Recent device not found.\nPress A to continue.	最近设备不存在。\n按 A 继续。
+Recent entry not found.\nPress A to continue.	最近记录不存在。\n按 A 继续。
+File moved! Press A to continue	移动完成！按 A 继续
+deleted successfully	删除成功
+failed to delete!	删除失败！
+Destination Device	目标设备
+Device Selection	设备选择
+Speed: 27 MHz	速度：27 MHz
+Speed: 13.5 MHz	速度：13.5 MHz
+ (X) Copy 	 (X) 复制 
+ (Y) Move 	 (Y) 移动 
+ (Z) Delete 	 (Z) 删除 
+ (R) Rename 	 (R) 重命名 
+ (L) Unhide 	 (L) 显示 
+ (L) Hide 	 (L) 隐藏 

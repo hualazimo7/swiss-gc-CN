@@ -1,0 +1,24 @@
+﻿# Swiss 汉化映射表 — FrameBufferMagic.c 通用控件与提示
+
+Loading…	正在加载…
+Elapsed: %02i:%02i:%02i	已用 %02i:%02i:%02i
+Remain: %02i:%02i:%02i	剩余 %02i:%02i:%02i
+Region: 	区域：
+Partition: %i, ISO: %i	分区：%i，ISO：%i
+%s - Please enter a value	%s - 请输入数值
+%s Cheats:	%s 金手指：
+%s Parameters:	%s 参数：
+Enabled: %i Total: %i	已启用 %i 总数 %i
+Space taken by cheats: %i/%i bytes (%.1f%% free)	金手指占用 %i/%i 字节（剩余 %.1f%%）
+WiiRD Debug %s	WiiRD 调试 %s
+Press X to change to [%s], current mode is [%s]	按 X 切换到 [%s]，当前模式 [%s]
+
+# —— 键位提示 ——
+(A) Toggle Cheat · (X) WiiRD Debug · (B) Return	(A) 切换金手指 · (X) WiiRD 调试 · (B) 返回
+(A) Toggle Param · (Start) Load the DOL	(A) 切换参数 · (Start) 加载 DOL
+(L/R) Cursor · (Start) Accept · (B) Discard	(L/R) 移动光标 · (Start) 确认 · (B) 放弃
+
+# —— DOL 参数说明（三行拼接，按中文语序重新断行）——
+Default values will be used by the DOL being loaded if a	若参数未启用，加载的 DOL 将使用默认值。
+parameter is not enabled. Please check the documentation	如果不确定该 DOL 的默认值，
+for this DOL if you are unsure of the default values.	请查阅相关文档。

@@ -1,0 +1,150 @@
+﻿# Swiss 汉化映射表 — 设置页
+# 格式：英文原文<TAB>中文译文   （必须整串匹配，含冒号等标点）
+
+# —— 通用取值（暂不翻译：Yes/No/On/Off 等会写入 swiss.ini，改动等于变更配置格式）
+# On	开
+# Off	关
+# Yes	是
+# No	否
+# Auto	自动
+# Default	默认
+# Disabled	禁用
+# Enabled	启用
+# None	无
+# Standard	标准
+# Fullwidth	全宽
+# Carousel	轮播
+# Game	游戏
+# All	全部
+# Stereo	立体声
+# Mono	单声道
+# Production	正式版
+# Reboot	重启
+# Slot A	插槽 A
+# Slot B	插槽 B
+# Slot A&B	插槽 A 和 B
+# Serial Port 2	串口 2
+# English	英语
+# German	德语
+# French	法语
+# Spanish	西班牙语
+# Italian	意大利语
+# Dutch	荷兰语
+# Japanese	日语
+# English (US)	英语（美国）
+# on (4:3)	开 (4:3)
+
+# —— 页面标题 ——
+Network Settings (3/6):	网络设置 (3/6):
+Global Game Settings (4/6):	全局游戏设置 (4/6):
+Default Game Settings (5/6):	默认游戏设置 (5/6):
+Current Game Settings (6/6):	当前游戏设置 (6/6):
+
+# —— 按钮 ——
+Back	返回
+Next	下一页
+Save & Exit	保存并退出
+Discard & Exit	放弃并退出
+Press (Y) for help	按 Y 查看帮助
+Reset to defaults	恢复默认
+
+# —— 全局设置（第 1 页）——
+System Boot Mode:	系统启动模式：
+System Sound:	系统声音：
+System Video:	视频制式：
+Screen Position:	画面位置：
+System Language:	系统语言：
+System Time Zone:	系统时区：
+Configuration Device:	配置存储：
+Swiss Video Mode:	Swiss 视频模式：
+Apps Video Mode:	应用视频模式：
+Init DVD Drive at startup:	启动时初始化光驱：
+Stop DVD Drive motor:	停止光驱电机：
+Configure Audio Buffer:	配置音频缓冲：
+SD/IDE-EXI Speed:	SD/IDE-EXI 速度：
+AVE Compatibility:	AVE 兼容模式：
+Force DTV Status:	强制 DTV 状态：
+RetroTINK-4K HDMI Input:	RetroTINK-4K 输入：
+Disable Controller Recalibration:	禁用手柄重校准：
+Disable Controller Rumble:	禁用手柄振动：
+Enable USB Gecko:	启用 USB Gecko：
+Wait for USB Gecko:	等待 USB Gecko：
+Simulated MRAM Size:	模拟 MRAM 容量：
+CPU Temperature Calibration:	CPU 温度校准：
+
+# —— 界面设置（第 2 页）——
+File Browser Type:	文件浏览方式：
+File Browser Type for apps:	应用浏览方式：
+File Browser Type for games:	游戏浏览方式：
+File Management:	文件管理：
+Recent List:	最近列表：
+Show hidden files:	显示隐藏文件：
+Hide unknown file types:	隐藏未知类型：
+Boot without prompts:	启动跳过提示：
+Load at startup:	启动时加载：
+Flatten directory:	展平目录：
+
+# —— 网络设置（第 3 页）——
+Init network at startup:	启动时初始化网络：
+IPv4 Address:	IPv4 地址：
+IPv4 Netmask:	子网掩码：
+IPv4 Gateway:	默认网关：
+IPv4 uses DHCP:	使用 DHCP：
+FSP Host IP:	FSP 主机 IP：
+FSP Port:	FSP 端口：
+FSP Password:	FSP 密码：
+FSP Path MTU:	FSP 路径 MTU：
+FTP Host IP:	FTP 主机 IP：
+FTP Port:	FTP 端口：
+FTP Username:	FTP 用户名：
+FTP Password:	FTP 密码：
+FTP PASV Mode:	FTP 被动模式：
+SMB Host IP:	SMB 主机 IP：
+SMB Share:	SMB 共享名：
+SMB Username:	SMB 用户名：
+SMB Password:	SMB 密码：
+SNTP Host IP:	SNTP 主机 IP：
+RetroTINK-4K Host IP:	RetroTINK-4K 主机 IP：
+RetroTINK-4K Port:	RetroTINK-4K 端口：
+
+# —— 全局游戏设置（第 4 页）——
+In-Game Reset:	游戏内复位：
+Load GameCube Main Menu:	加载 GameCube 主菜单：
+Emulate Memory Card:	模拟记忆卡：
+Disable MemCard PRO GameID:	禁用 MemCard PRO 游戏 ID：
+Disable Video Patches:	禁用视频补丁：
+Force Video Active:	强制视频输出：
+Pause for resolution change:	切换分辨率时暂停：
+Auto-load cheats:	自动加载金手指：
+WiiRD debugging:	WiiRD 调试：
+
+# —— 默认游戏设置（第 5 页）——
+Force NTSC Video Mode:	强制 NTSC 制式：
+Force PAL Video Mode:	强制 PAL 制式：
+Force Horizontal Scale:	强制水平缩放：
+Force Vertical Offset:	强制垂直偏移：
+Force Vertical Filter:	强制垂直滤波：
+Force Field Rendering:	强制场渲染：
+Fix Pixel Center:	修正像素中心：
+Disable Alpha Dithering:	禁用 Alpha 抖动：
+Force Anisotropic Filter:	强制各向异性过滤：
+Force Widescreen:	强制宽屏：
+Force Polling Rate:	强制轮询率：
+Invert Camera Stick:	反转 C 摇杆：
+Swap Camera Stick:	交换 C 与主摇杆：
+Digital Trigger Level:	数字扳机阈值：
+Emulate Audio Streaming:	模拟音频流：
+Emulate Read Speed:	模拟读取速度：
+Emulate Broadband Adapter:	模拟宽带网卡：
+Disable Memory Card:	禁用记忆卡：
+Disable Hypervisor:	禁用 Hypervisor：
+Prefer Clean Boot:	优先纯净启动：
+RetroTINK-4K Profile:	RetroTINK-4K 配置：
+
+# —— 当前游戏设置（第 6 页）——
+Game Language:	游戏语言：
+Force Video Mode:	强制视频模式：
+
+# —— 提示消息 ——
+Successfully saved configuration!	配置保存成功！
+Failed to save configuration!	配置保存失败！

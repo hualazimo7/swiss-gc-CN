@@ -1,0 +1,41 @@
+﻿# Swiss 汉化映射表 — info.c 信息页
+
+# —— 页面标题 ——
+System Info (1/5):	系统信息 (1/5):
+Device Info (2/5):	设备信息 (2/5):
+Hotplug Info (3/5):	热插拔信息 (3/5):
+Version Info (4/5):	版本信息 (4/5):
+Greetings (5/5):	致谢 (5/5):
+
+# —— 字段名 ——
+MODEL	型号
+CPU PVR	CPU PVR
+CPU ECID	CPU ECID
+IPL VERSION	IPL 版本
+AUDIO	音频
+LANGUAGE	语言
+VIDEO MODE	视频制式
+PROGRESSIVE VIDEO	逐行扫描
+CURRENT DEVICE	当前设备
+CONFIGURATION DEVICE	配置设备
+DVD INTERFACE	光驱接口
+HIGH SPEED PORT	高速端口
+Unknown (0x%08X)	未知 (0x%08X)
+%.*s (%s Mode)	%.*s（%s 模式）
+%s HW%i (%s)	%s 硬件%i (%s)
+
+# —— 版本信息 ——
+Swiss version 0.6	Swiss 版本 0.6
+Commit %s; Revision %s	提交 %s；修订 %s
+by emu_kidid & Extrems, 2026	作者 emu_kidid & Extrems, 2026
+Built with 	构建于 
+Source/Updates/Issues	源码 / 更新 / 反馈
+Web/Support	网站 / 支持
+Visit us on IRC at EFnet/#gc-forever	IRC：EFnet/#gc-forever
+Press A or B to return	按 A 或 B 返回
+
+# —— 致谢页 ——
+Current patreon supporters	当前 Patreon 支持者
+Historical Patreon supporters	历史 Patreon 支持者
+...and a big thanks to YOU, for using Swiss!	……以及最重要的：感谢使用 Swiss 的你！
+Extra Greetz: FIX94, megalomaniac, sepp256, novenary	特别致谢：FIX94, megalomaniac, sepp256, novenary

@@ -1,0 +1,363 @@
+#!/usr/bin/env python3
+"""Generate cjkfont.c / cjkfont.h for a given charset.
+
+Glyph storage: 1bpp, 16 rows x 2 bytes, MSB = leftmost pixel.
+The runtime expands this into a GX I4 atlas (tiled/swizzled) once at init.
+
+Glyphs come from a TrueType font that ships an embedded 16 px bitmap strike
+(SimSun by default); anything it lacks falls back to GNU Unifont.
+
+Usage:
+  python gen_font.py --text "中文测试"
+  python gen_font.py --charset out/charset.txt
+  python gen_font.py --from-source --gb2312        # full production charset
+  python gen_font.py --font C:/Windows/Fonts/simhei.ttf --from-source
+  python gen_font.py --unifont-only --from-source  # old thin-stroke fallback
+"""
+import argparse
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+FONT = os.path.join(HERE, "..", "fonts", "unifont.hex")
+def _env_path(var, default_rel):
+    """Resolve a workspace path; override with an env var on other machines."""
+    import os
+    from pathlib import Path
+    base = Path(os.environ.get(
+        "SWISS_GC_WORKSPACE", str(Path(__file__).resolve().parents[3])))
+    return Path(os.environ[var]) if os.environ.get(var) else base / default_rel
+
+
+OUT_DIR = str(_env_path("SWISS_GC_GUI", "swiss-gc/cube/swiss/source/gui"))
+
+CELL = 16
+BYTES_PER_GLYPH = 32
+# On-screen size of a glyph quad. Kept equal to CELL so the bitmap maps 1:1
+# onto the screen; any upscale makes GX_NEAR repeat whole rows and columns.
+DRAW = 16
+
+# Optional glyph source: a TrueType font that ships an embedded 16 px bitmap
+# strike (SimSun does). FreeType then returns exact 1bpp pixels, the same
+# classic 16x16 dot matrix HZK16 and DOS-era Chinese software used.
+#
+# Off by default. Compared glyph by glyph, SimSun and Unifont produce identical
+# bitmaps for 3714 of the 3769 characters; the 55 that differ are mostly
+# punctuation, where SimSun's strike places 。：…“ at the LEFT edge of the cell
+# (half-width forms meant for proportional text) and Unifont centres them
+# properly. Unifont is also self-contained, so the build stays reproducible
+# without a Windows font. Pass --font to opt in.
+TTF_FONT = os.environ.get("CJK_TTF")     # e.g. C:\Windows\Fonts\simsun.ttc
+TTF_INDEX = 0
+TTF_SIZE = CELL
+
+
+def load_font(path=FONT):
+    glyphs = {}
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        for line in fh:
+            line = line.strip()
+            if ":" not in line:
+                continue
+            cp, data = line.split(":", 1)
+            try:
+                glyphs[int(cp, 16)] = data
+            except ValueError:
+                continue
+    return glyphs
+
+
+def rasterize_ttf(codepoints, path=TTF_FONT, index=TTF_INDEX, size=TTF_SIZE):
+    """Render each code point to a 16x16 1bpp bitmap.
+
+    Uses the font's own embedded bitmap strike when it has one (SimSun at
+    16 px), otherwise falls back to FreeType's hinted outline, thresholded to
+    1bpp. Code points with no ink are left out so the caller can try Unifont.
+    """
+    if not path or not os.path.exists(path):
+        print(f"font unavailable, falling back to Unifont: {path}")
+        return {}
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        print("Pillow missing (pip install pillow), falling back to Unifont")
+        return {}
+    try:
+        font = ImageFont.truetype(path, size, index=index)
+    except OSError as exc:
+        print(f"cannot open {path}: {exc}; falling back to Unifont")
+        return {}
+
+    img = Image.new("L", (CELL, CELL), 0)
+    draw = ImageDraw.Draw(img)
+    blank = [0, 0, CELL - 1, CELL - 1]
+    out = {}
+    for cp in codepoints:
+        draw.rectangle(blank, fill=0)
+        draw.text((0, 0), chr(cp), font=font, fill=255, anchor="la")
+        px = img.load()
+        rows = bytearray()
+        ink = False
+        for y in range(CELL):
+            bits = 0
+            for x in range(CELL):
+                if px[x, y] > 127:
+                    bits |= 0x8000 >> x
+                    ink = True
+            rows.append((bits >> 8) & 0xFF)
+            rows.append(bits & 0xFF)
+        if ink:
+            out[cp] = bytes(rows)
+    return out
+
+
+def unifont_bytes(glyphs, cp):
+    """Fallback glyph: expand a Unifont .hex row into the 32-byte 1bpp bitmap.
+
+    Unifont stores CJK as 16x16 (64 hex digits) but Latin/punctuation as 8x16
+    (32 hex digits). Narrow glyphs are centred in the 16 px cell so punctuation
+    like “ ” sits sensibly next to CJK.
+    """
+    d = glyphs.get(cp)
+    if not d:
+        return None
+    out = bytearray()
+    if len(d) >= 64:
+        for r in range(16):
+            row = int(d[r * 4:(r + 1) * 4], 16)
+            out.append((row >> 8) & 0xFF)
+            out.append(row & 0xFF)
+        return bytes(out)
+    if len(d) >= 32:
+        for r in range(16):
+            b = int(d[r * 2:(r + 1) * 2], 16)      # 8 px, bit7 = leftmost
+            row = (b << 4) & 0xFFFF                # centre: x = 4..11
+            out.append((row >> 8) & 0xFF)
+            out.append(row & 0xFF)
+        return bytes(out)
+    return None
+
+
+def build_bitmaps(codepoints, font_path=TTF_FONT):
+    """Resolve every code point to a 32-byte bitmap: TTF first, Unifont second."""
+    ttf = rasterize_ttf(codepoints, font_path) if font_path else {}
+    if ttf:
+        print(f"glyph source : {os.path.basename(font_path)} at {TTF_SIZE}px "
+              f"-> {len(ttf)}/{len(codepoints)}")
+    else:
+        print("glyph source : GNU Unifont (built-in)")
+    fallback = [cp for cp in codepoints if cp not in ttf]
+    unifont = load_font() if fallback else {}
+    out = {}
+    from_unifont = 0
+    missing = []
+    for cp in codepoints:
+        b = ttf.get(cp)
+        if b is None:
+            b = unifont_bytes(unifont, cp)
+            if b is not None:
+                from_unifont += 1
+        if b is None:
+            missing.append(cp)
+        else:
+            out[cp] = b
+    if from_unifont:
+        print(f"glyph fallback: Unifont -> {from_unifont}")
+    if missing:
+        print("no glyph for: " + " ".join(f"U+{cp:04X}" for cp in missing))
+    return out
+
+
+def collect_charset(text="", charset_file=None):
+    chars = set()
+    if text:
+        chars.update(text)
+    if charset_file:
+        with open(charset_file, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                chars.update(line)
+    # keep only what will actually route through the CJK path
+    return sorted(cp for cp in (ord(c) for c in chars) if cp >= 0x80)
+
+
+DEFAULT_TEST = "中文测试系统信息设置视频模式区域存档管理正在加载版本游戏列表返回"
+
+
+def gb2312_level1():
+    """Every character in GB2312 level 1 (3755 chars, the common set).
+
+    Needed for dynamic text such as file names, which are not known at build
+    time. Level 2 (3008 rarer chars) is skipped: including it would need more
+    than a 1024x1024 atlas.
+    """
+    chars = set()
+    for b1 in range(0xB0, 0xD8):
+        for b2 in range(0xA1, 0xFF):
+            try:
+                chars.add(bytes([b1, b2]).decode("gb2312"))
+            except UnicodeDecodeError:
+                continue
+    return chars
+
+
+def collect_from_source(src_root=None):
+    """Collect every non-ASCII code point used in string literals in the tree.
+
+    Keeps the charset in sync with the translations automatically, which is the
+    only reliable way to avoid "character silently not drawn" bugs.
+    """
+    import re
+    src_root = src_root or os.path.join(os.path.dirname(HERE), "..", "swiss-gc",
+                                         "cube", "swiss", "source")
+    src_root = os.path.abspath(src_root)
+    skip = {"littlefs"}
+    str_re = re.compile(r'"(?:\\.|[^"\\])*"')
+    used = set()
+    for root, dirs, files in os.walk(src_root):
+        dirs[:] = [d for d in dirs if d not in skip]
+        for name in files:
+            if not name.endswith(".c"):
+                continue
+            path = os.path.join(root, name)
+            with open(path, encoding="utf-8", errors="replace") as fh:
+                for line in fh:
+                    s = line.lstrip()
+                    if s.startswith("*") or s.startswith("//"):
+                        continue
+                    for lit in str_re.findall(line):
+                        for ch in lit:
+                            cp = ord(ch)
+                            if cp > 0xFF and cp != 0xFFFD:
+                                used.add(cp)
+    return sorted(used)
+
+
+# Page geometry, tuned on hardware. The GX only keeps the first ~440 rows of a
+# 512x512 I4 texture resident; beyond that the hardware sampled stale TMEM and
+# glyphs came out blank. 512x256 (64 KB) fits comfortably, at the cost of more
+# page switches: 512 glyphs per page instead of 1024.
+PAGE_W = 512
+PAGE_H = 256
+COLS = PAGE_W // CELL
+PER_PAGE = COLS * (PAGE_H // CELL)
+
+
+def page_count(n):
+    return (n + PER_PAGE - 1) // PER_PAGE
+
+
+def write_c(codepoints, bitmaps, header_path, source_path):
+    n = len(codepoints)
+    with open(header_path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write("/* Auto-generated by tools/gen_font.py - do not edit */\n")
+        fh.write("#ifndef CJKFONT_H\n#define CJKFONT_H\n\n")
+        fh.write(f"#define CJKFONT_CELL      {CELL}\n")
+        fh.write(f"#define CJKFONT_BYTES     {BYTES_PER_GLYPH}\n")
+        fh.write(f"#define CJKFONT_COUNT     {n}\n")
+        # Drawn size on screen. The bitmap is 16x16 but the IPL Latin glyphs
+        # read larger, so we upscale slightly; GX_LINEAR smooths the stretch.
+        fh.write(f"#define CJKFONT_DRAW      {DRAW}\n")
+        fh.write(f"#define CJKFONT_ADVANCE   {DRAW + 1}\n")
+        fh.write(f"#define CJKFONT_PAGE_W    {PAGE_W}\n")
+        fh.write(f"#define CJKFONT_PAGE_H    {PAGE_H}\n")
+        fh.write(f"#define CJKFONT_COLS      {COLS}\n")
+        fh.write(f"#define CJKFONT_PER_PAGE  {PER_PAGE}\n")
+        fh.write(f"#define CJKFONT_PAGES     {page_count(n)}\n\n")
+        fh.write("extern const unsigned int  cjkfont_codepoints[CJKFONT_COUNT];\n")
+        fh.write("extern const unsigned char cjkfont_bitmaps[CJKFONT_COUNT * CJKFONT_BYTES];\n\n")
+        fh.write("/* binary search; returns glyph index or -1 */\n")
+        fh.write("int cjkfont_lookup(unsigned int codepoint);\n\n#endif\n")
+
+    with open(source_path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write("/* Auto-generated by tools/gen_font.py - do not edit */\n")
+        fh.write('#include "cjkfont.h"\n\n')
+        fh.write(f"const unsigned int cjkfont_codepoints[CJKFONT_COUNT] = {{\n")
+        for i in range(0, n, 8):
+            chunk = ", ".join(f"0x{cp:04X}" for cp in codepoints[i:i + 8])
+            fh.write(f"    {chunk},\n")
+        fh.write("};\n\n")
+        fh.write("const unsigned char cjkfont_bitmaps[CJKFONT_COUNT * CJKFONT_BYTES] = {\n")
+        for idx in range(n):
+            fh.write(f"    /* {chr(codepoints[idx])} U+{codepoints[idx]:04X} */\n")
+            b = bitmaps[idx]
+            for r in range(16):
+                fh.write(f"    0x{b[r*2]:02X}, 0x{b[r*2+1]:02X},\n")
+        fh.write("};\n\n")
+        fh.write("""int cjkfont_lookup(unsigned int codepoint)
+{
+    int lo = 0, hi = CJKFONT_COUNT - 1;
+    while (lo <= hi) {
+        int mid = (lo + hi) >> 1;
+        if (cjkfont_codepoints[mid] == codepoint) return mid;
+        if (cjkfont_codepoints[mid] < codepoint) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+""")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--text", default="")
+    ap.add_argument("--charset", default=None)
+    ap.add_argument("--from-source", action="store_true",
+                    help="take the charset from the strings already in the source tree")
+    ap.add_argument("--gb2312", action="store_true",
+                    help="also include GB2312 level 1 so dynamic text "
+                         "(file names) can be drawn")
+    ap.add_argument("--out-dir", default=OUT_DIR)
+    ap.add_argument("--font", default=TTF_FONT,
+                    help="optional TrueType font with a 16 px bitmap strike; "
+                         "default is Unifont")
+    ap.add_argument("--unifont-only", action="store_true",
+                    help="ignore the TTF and use GNU Unifont for everything")
+    args = ap.parse_args()
+
+    if args.from_source:
+        codepoints = collect_from_source()
+        print(f"charset from source: {len(codepoints)} code points")
+    else:
+        text = args.text or ("" if args.charset else DEFAULT_TEST)
+        codepoints = collect_charset(text, args.charset)
+
+    if args.gb2312:
+        extra = sorted(ord(c) for c in gb2312_level1())
+        codepoints = sorted(set(codepoints) | set(extra))
+        print(f"charset with GB2312 level 1: {len(codepoints)} code points")
+    if not codepoints:
+        print("empty charset")
+        return 1
+
+    resolved = build_bitmaps(codepoints, None if args.unifont_only else args.font)
+    bitmaps = []
+    missing = []
+    for cp in codepoints:
+        b = resolved.get(cp)
+        if b is None:
+            missing.append(cp)
+            b = bytes(BYTES_PER_GLYPH)
+        bitmaps.append(b)
+
+    hp = os.path.join(args.out_dir, "cjkfont.h")
+    sp = os.path.join(args.out_dir, "cjkfont.c")
+    write_c(codepoints, bitmaps, hp, sp)
+
+    print(f"glyphs : {len(codepoints)}")
+    print(f"data   : {len(codepoints) * BYTES_PER_GLYPH} bytes 1bpp")
+    pages = page_count(len(codepoints))
+    print(f"atlas  : {pages} page(s) of {PAGE_W}x{PAGE_H} I4 "
+          f"= {pages * PAGE_W * PAGE_H // 2 // 1024} KB total, "
+          f"{PER_PAGE} glyphs/page")
+    if missing:
+        print("MISSING in font:", " ".join(f"U+{c:04X}" for c in missing))
+    print("wrote", hp)
+    print("wrote", sp)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
