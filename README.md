@@ -4,6 +4,8 @@
   <a href="https://ifdian.net/a/hualazimo7" title="在爱发电请我喝一杯咖啡">
     <img src="docs/afdian-sponsor.svg" alt="请我喝一杯咖啡 · 爱发电" height="44">
   </a>
+  <br>
+  <a href="https://ifdian.net/a/hualazimo7"><sub>或点此前往爱发电 →</sub></a>
 </p>
 
 > ⚠️ **禁止商业使用 / NON-COMMERCIAL USE ONLY**：本仓库的原创内容仅限非商业用途，禁止出售、预装到售卖的硬件/存储卡、付费代刷、广告变现等。详见 [LICENSE](LICENSE) 与 [NOTICE.md](NOTICE.md)。
