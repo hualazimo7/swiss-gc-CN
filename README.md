@@ -62,9 +62,9 @@ SD:\swiss\patches\apploader.img
 
 | 文件 | 大小 | SHA-256（前 16 位） |
 |---|---:|---|
-| `firmware/swiss.dol` | 1,027,104 B | `2a52fd27c085b335` |
-| `firmware/swiss-wiiload.dol` | 3,245,600 B | `73b13affe9e564e3` |
-| `igr/apploader.img` | 1,026,880 B | `3e9b6e29b434653b` |
+| `firmware/swiss.dol` | 1,028,608 B | `7351321f673f3836` |
+| `firmware/swiss-wiiload.dol` | 3,247,008 B | `07abaa443cfd8b38` |
+| `igr/apploader.img` | 1,028,384 B | `54ddd42f11fa637d` |
 
 `apploader.img` 的版本标记为 `*swiss_r2154.dol`，与 SD 卡根目录的 `IPL.dol` 内嵌同一份 `executable.xz`。
 
@@ -125,10 +125,26 @@ py -3 tools/rename_games_cn.py --rollback             # 一键还原
 
 `docs/GameCube_中文译名表.md` 是一次实机批量改名的 56 条对照记录，`docs/screen-cn.png` 是改名后的实机画面。
 
+## 背景图切换（设置 → 界面设置 2/6 → 背景图）
+
+本构建在设置里加了背景选择，不再只能替换单个文件：
+
+| 取值 | 行为 |
+|---|---|
+| 关闭（0） | 用 Swiss 内置背景，不必删文件 |
+| 1 ~ 9 | 读取 `swiss/backdropN.tpl`；选 1 且该文件不存在时，自动回退旧名 `swiss/backdrop.tpl` |
+
+- 左右键切换**立即生效**，无需重启；值保存在 `global.ini` 的 `BackdropIndex`
+- 文件缺失或解析失败会立刻回退内置背景，不会黑屏
+- 每次切换会先 `TPL_CloseTPLFile()` 释放上一张贴图（libogc2 里只有它会 `free` 纹理数据），反复切换不漏内存
+
+配套的背景图制作工具见同作者的 [swiss-gc-Imager](https://github.com/hualazimo7/swiss-gc-Imager)（`SwissBackdrop.exe`），生成的文件改名成 `backdrop1.tpl` / `backdrop2.tpl` 即可。截图：[`docs/screenshots/07-backdrop.png`](docs/screenshots/07-backdrop.png)。
+
 ## 实机验证状态
 
 - 中文界面、设置项显示层汉化（配置文件仍写英文值，不破坏 `swiss.ini`）、顶部温度与日期同行显示
 - 中文文件名、自定义背景、SD 卡启动游戏、冷启动
+- **背景图切换已实机通过**（2026-11-09）：开机按 `BackdropIndex` 加载、设置页内左右键即时换图、缺文件回退内置背景、连续切换 14 次无异常
 - **`A + Z + Start` 复位已真机通过**（2026-11-09）：回到中文 Swiss 主界面，无机器重启；`R + Z + Start` 沿用同一逻辑，未单独按键复测
 - `apploader.img` 写入 SD 卡后 `/get` 回读与本地逐字节一致
 
