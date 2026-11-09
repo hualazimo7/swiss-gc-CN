@@ -52,9 +52,9 @@
 - 产物：`igr/apploader.img` 1,027,200 B（32 B 头 + 1,027,168 B 镜像），版本标记 `*swiss_r2154.dol`
 - 校验链 12/12 通过：`swiss.elf → executable.bin → executable.xz → reboot.dol → apploader.img`，并验证 SD 卡 `IPL.dol` 与 `apploader.img` 内嵌同一份 `executable.xz`
 
-## 2026-11-08 — 简中汉化构建 r2154
+## 2026-11-08 — 简中汉化构建（基线 commit 62a8b9a2 / revision 2154）
 
-基于上游 `emukidid/swiss-gc` 的 r2154 / commit `62a8b9a2`：
+基于上游 `emukidid/swiss-gc` 的 master commit `62a8b9a2`（2026-11-05）。Swiss 的 `revision` 是 `git rev-list HEAD | wc -l` 算出的提交总数 2154，官方最后一个发布 tag 是 `v0.6r2119`（commit `163f8b1d`，比本基线旧 35 个提交）：
 
 - 界面文本、设置项、帮助说明、错误提示、设备名、设备错误信息全部中文化
 - 设置取值（是/否等）在**显示层**汉化，配置文件仍写英文值，不破坏 `swiss.ini` / `global.ini`

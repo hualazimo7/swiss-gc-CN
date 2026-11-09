@@ -11,7 +11,7 @@
 > ⚠️ **禁止商业使用 / NON-COMMERCIAL USE ONLY**：本仓库的原创内容仅限非商业用途，禁止出售、预装到售卖的硬件/存储卡、付费代刷、广告变现等。详见 [LICENSE](LICENSE) 与 [NOTICE.md](NOTICE.md)。
 > 上游 Swiss / GNU Unifont 的 GPL-2.0 材料不受此限制（见 [LICENSE-GPL-2.0.txt](LICENSE-GPL-2.0.txt)）。
 
-[Swiss](https://github.com/emukidid/swiss-gc) 是 GameCube 的全能自制程序加载器。本仓库收录基于上游 **r2154 / commit `62a8b9a2`** 的**简体中文构建**，以及与之**严格配套**的游戏内复位（IGR / Apploader）文件。
+[Swiss](https://github.com/emukidid/swiss-gc) 是 GameCube 的全能自制程序加载器。本仓库收录基于上游 **master commit `62a8b9a2`**（2026-11-05，界面显示的 revision 为 **2154**）的**简体中文构建**，以及与之**严格配套**的游戏内复位（IGR / Apploader）文件。
 
 > 这两个东西必须成对使用：`apploader.img` 内嵌了本次编译的汉化 Swiss 本体，换固件不换它（或反过来）都会导致复位后黑屏、反复重启或回到英文原版。
 
@@ -158,6 +158,24 @@ tools/       build_apploader.py / upload_file.py / wiiload.py / swiss_client.py
              rename_games_cn.py
 docs/        IGR 原理、汉化实现、游戏名中文化、译名表、实机截图
 ```
+
+## 附：为什么版本号是 2154，官方却是 2119
+
+Swiss 的 `revision` **不是 SVN 号**，而是 `git rev-list HEAD | wc -l`，即**当前 commit 的提交总数**。数字来自构建脚本本身：
+
+- `cube/swiss/Makefile`：`-D'GIT_REVISION="$(shell git rev-list HEAD | wc -l)"'`
+- 顶层 `Makefile`：`SVN_REVISION = swiss_r$(REVISION)`（变量名里的 `SVN_` 是历史遗留）
+
+对照表：
+
+| 版本 | commit | 日期 | `git rev-list` 计数 |
+|---|---|---|---:|
+| 官方最新发布 **v0.6r2119** | `163f8b1d` | 2026-09-24 | 2119（tag 名里的数字就等于当时的计数） |
+| **本构建的基线** | **`62a8b9a2`** | **2026-11-05** | **2154** |
+
+也就是说：**2119 是官方最后一个打过 tag 的发布版，2154 是它之后第 35 个提交的 master 快照**。两者不是同一类东西——一个是发布号，一个是提交计数；本构建比官方发布**新 35 个提交**，功能上只多不少。
+
+上游在 2026-11-08 的提交 `Get Swiss version from last Git tag.` 里给界面加了取自 `git describe --tags` 的 `GIT_VERSION`（形如 `0.6`），但 `revision` 仍然用提交计数，所以这个差异会长期存在。
 
 ## 许可与致谢
 

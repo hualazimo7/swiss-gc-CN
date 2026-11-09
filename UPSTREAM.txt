@@ -1,3 +1,6 @@
 upstream : https://github.com/emukidid/swiss-gc
-baseline : r2154 / commit 62a8b9a2
+baseline : commit 62a8b9a2 (2026-11-05), revision 2154
+           revision = `git rev-list HEAD | wc -l`（提交总数，非 SVN 号）
+official : 最新发布 tag v0.6r2119 = commit 163f8b1d (2026-09-24)
+           baseline 比该发布新 35 个提交
 modified : 2026-11-08

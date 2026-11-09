@@ -1,6 +1,6 @@
 # 变更说明
 
-基线：上游 [swiss-gc](https://github.com/emukidid/swiss-gc) **r2154**（commit `62a8b9a2`，2026-11-05）。
+基线：上游 [swiss-gc](https://github.com/emukidid/swiss-gc) **master commit `62a8b9a2`**（2026-11-05，界面 revision 2154；官方最新发布 tag 为 `v0.6r2119`，本基线比它新 35 个提交）。
 本文件记录汉化版相对该基线的全部改动。
 
 规模：**27 个文件，+1456 / −730 行**（不含自动生成的 `cjkfont.c/h`）。
