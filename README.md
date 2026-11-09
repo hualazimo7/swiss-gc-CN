@@ -177,6 +177,8 @@ Swiss 的 `revision` **不是 SVN 号**，而是 `git rev-list HEAD | wc -l`，�
 
 上游在 2026-11-08 的提交 `Get Swiss version from last Git tag.` 里给界面加了取自 `git describe --tags` 的 `GIT_VERSION`（形如 `0.6`），但 `revision` 仍然用提交计数，所以这个差异会长期存在。
 
+⚠️ **自己从源码构建时，这个数字会变**：它取决于你本地仓库的提交数。如果你 `git fetch` 到了更新的上游提交，或者在自己的 fork 上又提交了汉化改动，编出来的 `revision` 就不再是 2154——这时 `apploader.img` 的版本标记（`*swiss_r<数字>.dol`）也会跟着变，属于正常现象，只要**固件与 `apploader.img` 出自同一次构建**即可。
+
 ## 许可与致谢
 
 > ⚠️ 本仓库**原创内容禁止商业使用**；上游 GPL-2.0 材料不受此限制。完整条款见
