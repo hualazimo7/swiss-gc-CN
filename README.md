@@ -44,7 +44,8 @@
 
 | 版本 | 日期 | 固件 SHA-256 前 8 位 | 主要变化 |
 |---|---|---|---|
-| [**v2154-zh-r7（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r7) | 2026-11-10 | `1ec622cb` | 补齐 ActionReplay / FlippyDrive / WiikeyFusion / Wii / WODE / 记忆卡六种启动方式（**当前推荐**；固件未变） |
+| [**v2154-zh-r8（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r8) | 2026-11-10 | `26d133f3` | 字库扩到 8887 字，补齐 Big5 常用繁体/日文汉字（**当前推荐**；固件重编，全部启动方式文件同步更新） |
+| [v2154-zh-r7](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r7) | 2026-11-10 | `1ec622cb` | 补齐 ActionReplay / FlippyDrive / WiikeyFusion / Wii / WODE / 记忆卡六种启动方式（固件未变） |
 | [v2154-zh-r6](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r6) | 2026-11-10 | `1ec622cb` | 新增 GCLoader 可引导 ISO 与三个区域镜像 |
 | [v2154-zh-r5](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r5) | 2026-11-10 | `1ec622cb` | 中文串里的数字改用点阵 |
 | [v2154-zh-r4](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r4) | 2026-11-10 | `777243c4` | 修复中文游戏名缺字，字库扩到 6992 字 |
@@ -84,8 +85,9 @@ GCLoader 把 SD 卡上的镜像当一张真实光盘挂给主机，走的是原�
 [`gcloader/使用说明.md`](gcloader/使用说明.md)；自行换 DOL 重新打包用
 `python tools/build_gcloader_iso.py --all`。
 
-> ✅ **GCLoader 真机已验证可用**（2026-11-10 用户实机反馈）：把 `boot.iso` 放在
-> GCLoader SD 卡根目录可正常启动进入中文 Swiss。此前镜像已与官方 r2119 `boot.iso`
+> ✅ **GCLoader 真机已验证可用**（2026-11-10 用户实机反馈，r7 固件）：把 `boot.iso` 放在
+> GCLoader SD 卡根目录可正常启动进入中文 Swiss。r8 仅更换了镜像内固件、结构未改，
+> 仍建议重测一次。此前镜像已与官方 r2119 `boot.iso`
 > 做过结构对照：前 32 KiB 光盘头逐字节相同、boot catalog 与 DOL 的 LBA 一致、
 > El Torito platform ID 与校验和一致。Dolphin 对官方盘同样黑屏，属于模拟器
 > 不支持该启动路径，不能用 Dolphin 的结果判断镜像好坏。
@@ -131,13 +133,13 @@ SD:\swiss\patches\apploader.img
 
 | 文件 | 大小 | SHA-256（前 16 位） |
 |---|---:|---|
-| `firmware/swiss.dol` | 1,076,352 B | `1ec622cbb8293b17` |
-| `firmware/swiss-wiiload.dol` | 3,363,296 B | `d11c934b56c727e0` |
-| `igr/apploader.img` | 1,076,128 B | `500a9b0e2be484a5` |
-| `gcloader/boot.iso` | 1,470,464 B | `a9022050d9a68a8f` |
-| `ActionReplay/SDLOADER.BIN` | 1,076,096 B | `dfff1109308d72ff` |
-| `WiikeyFusion/swiss-zh.fzn` | 1,900,544 B | `e6ee79daf38e6e82` |
-| `Wii/EXTRACT_TO_ROOT.zip` | 1,554,827 B | `0ff852a9dc7c8a8b` |
+| `firmware/swiss.dol` | 1,106,336 B | `26d133f3af418204` |
+| `firmware/swiss-wiiload.dol` | 3,431,136 B | `85a856ed392cfe08` |
+| `igr/apploader.img` | 1,106,112 B | `12d86f3c101f9ee4` |
+| `gcloader/boot.iso` | 1,501,184 B | `5576d2ea0a9d05ab` |
+| `ActionReplay/SDLOADER.BIN` | 1,106,080 B | `becb62ab28d893e9` |
+| `WiikeyFusion/swiss-zh.fzn` | 1,900,544 B | `b3590a7d764fdf85` |
+| `Wii/EXTRACT_TO_ROOT.zip` | 1,584,811 B | `60c4f0df1d1479b1` |
 
 全部 19 项二进制产物的完整校验值见 `SHA256SUMS.txt`。
 
@@ -168,7 +170,8 @@ export MSYS_BASH=/c/msys64/usr/bin/bash.exe
 
 # 2) 应用中文翻译与字模（source/tools/ 下）
 py -3 source/tools/apply_translations.py source/translations/*.tsv
-py -3 source/tools/gen_font.py
+py -3 source/tools/gen_font.py --from-source --gb2312-full --big5-common \
+    --extra-chars docs/GameCube_中文译名表.md --unifont-only
 py -3 source/tools/preflight.py
 
 # 3) 编译固件
@@ -209,16 +212,25 @@ py -3 tools/rename_games_cn.py --rollback             # 一键还原
 
 `docs/GameCube_中文译名表.md` 是一次实机批量改名的 56 条对照记录，`docs/screen-cn.png` 是改名后的实机画面。
 
-### 中文字库覆盖（2026-11-10 修复）
+### 中文字库覆盖（2026-11-10 两次扩库）
 
 曾收到实机反馈：`忍者神龟3：变异噩梦` 里「噩」显示为空，看起来像 `变异 梦`。
 根因不是渲染：旧字库只收 **GB2312 一级 3755 字 + 界面译文用字**（共 3771 字），
 而游戏文件名是固件编译之后才由用户改的，「噩 / 飙 / 鑫」这类**二级字**没进字库；
 查不到字形时旧代码直接跳过绘制、字宽照算，于是留下一个字宽的空白。
 
-现在字库共 **7002 字**：GB2312 全量（一级+二级 6763 字）∪ 源码用字 ∪ 中文译名表
-∪ 常见繁体/日文异体字 ∪ ASCII 数字 0-9，并固定收录一个 `□` 占位符。任何仍不在库内的
-码位都会画成 `□`，不再静默留白。代价：图集 8→14 页（512 KB→896 KB 常驻），DOL 增大约 113 KB。
+r5 起扩到 **7002 字**（GB2312 全量 6763 ∪ 源码用字 ∪ 译名表 ∪ 异体字 ∪ 数字 ∪ `□`），
+查不到的码位统一画 `□`，不再静默留白；图集 14 页 / 896 KB。
+
+**r8 补齐繁体 / 日文常用字**：又收到「斑鸠」的「鸠」不显示的报告。从发布固件二进制
+逐字节复核，简体「鸠」U+9E20（GB2312 二级字）在 r5~r7 里码位与位图都完好——
+实际是日版原名「斑**鳩**」的「鳩」U+9CE9 不在 GB2312，或反馈者仍在跑 r1~r4 的旧字库。
+顺带查出 `EXTRA_VARIANTS` 手工枚举有系统性漏字：Big5 常用区 5401 字里 1885 个未收录
+（鳩、無、雙、實、戰、歐、鋼、賽…）。
+
+r8 起生产命令加 `--big5-common`，字库共 **8887 字**：GB2312 全量 6763 ∪ Big5 常用区
+5401 ∪ 源码用字 ∪ 译名表 ∪ 手工异体表 ∪ ASCII 0-9 ∪ `□`。两个字符集均 **0 缺失**，
+图集 **18 页 / 1152 KB** 常驻（比 r7 +256 KB，DOL +29,984 B）。仍不在库内的码位画 `□`。
 
 **混排数字也统一了字体**（2026-11-10）：含中文的字符串里，`0-9` 不再用 IPL ROM 字体，
 而是从同一张 Unifont 图集取字形，与汉字共用 16px 网格、笔画粗细和基线；数字按半角
@@ -229,12 +241,14 @@ py -3 tools/rename_games_cn.py --rollback             # 一键还原
 
 ```bash
 py -3 source/tools/check_glyphs.py --extra docs/GameCube_中文译名表.md
-py -3 source/tools/gen_font.py --from-source --gb2312-full \
+py -3 source/tools/gen_font.py --from-source --gb2312-full --big5-common \
     --extra-chars docs/GameCube_中文译名表.md --unifont-only
 ```
 
-新字加进 `gen_font.py` 的 `EXTRA_VARIANTS` 或用 `--extra-chars` 传入，重新生成
-`cjkfont.c/.h` 后编译即可。**记得同时重跑 `build_apploader.py`**，固件与 IGR 镜像必须同次构建。
+常用繁体/日文字已由 `--big5-common` 自动覆盖；个别生僻字仍可加进
+`gen_font.py` 的 `EXTRA_VARIANTS` 或用 `--extra-chars` 传入。重新生成
+`cjkfont.c/.h` 后编译即可。**记得同时重跑 `build_apploader.py`**，固件与 IGR 镜像必须同次构建；
+固件一变，ISO 与全部启动方式文件也要用 `build_boot_variants.py` 重新生成。
 
 ## 背景图切换（设置 → 界面设置 2/6 → 背景图）
 
@@ -258,10 +272,11 @@ py -3 source/tools/gen_font.py --from-source --gb2312-full \
 - **背景图切换已实机通过**（2026-11-09）：开机按 `BackdropIndex` 加载、设置页内左右键即时换图、缺文件回退内置背景、连续切换 14 次无异常
 - **`A + Z + Start` 复位已真机通过**（2026-11-09）：回到中文 Swiss 主界面，无机器重启；`R + Z + Start` 沿用同一逻辑，未单独按键复测
 - `apploader.img` 写入 SD 卡后 `/get` 回读与本地逐字节一致
-- ✅ **GCLoader `boot.iso` 已真机通过**（2026-11-10 用户实机反馈）：放 GCLoader
-  SD 卡根目录即可启动中文 Swiss。此前 20 项自检通过、与官方 r2119 镜像结构对齐
+- ✅ **GCLoader `boot.iso` 已真机通过**（2026-11-10 用户实机反馈，当时为 r7 固件）：
+  放 GCLoader SD 卡根目录即可启动中文 Swiss。20 项自检通过、与官方 r2119 镜像结构对齐
   （光盘头、catalog/DOL LBA、platform ID 与校验和）；Dolphin 加载官方盘同样黑屏，
-  属模拟器不支持该 El Torito 启动路径，不作为判断依据
+  属模拟器不支持该 El Torito 启动路径，不作为判断依据。
+  **r8 换了固件但 ISO 结构与生成方式未变**，仍建议 GCLoader 用户重测一次 r8 版 `boot.iso`
 - **Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡尚未实机验证**：
   各产物与上游 r2119 发布包结构逐项对齐，Wii 的 DOL 段注入与两个 GCI 另与上游
   `dol2ipl.py` / `dol2gci.exe` 输出逐字节一致；等待各设备用户反馈

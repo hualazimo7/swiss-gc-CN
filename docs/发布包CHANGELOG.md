@@ -21,12 +21,15 @@ ASCII 走 IPL 字体、`>0xFF` 走中文图集，两者共用同一基线。
 ### 1.2 16×16 点阵图集
 
 - 字模：`fonts/unifont.hex` → 16×16 1bpp，每字 32 字节
-- 字符集：**GB2312 全量 6763 字 ∪ 源码用字 ∪ 中文译名表 ∪ 常见繁/日异体 ∪ ASCII 0-9 = 7002 字**
-  （`gen_font.py --from-source --gb2312-full --extra-chars <译名表> --unifont-only`；
-  早期版本只有一级 3755 字，游戏名里的「噩」等二级字会静默留白，2026-11-10 修复）
+- 字符集：**GB2312 全量 6763 字 ∪ Big5 常用区 5401 字 ∪ 源码用字 ∪ 中文译名表
+  ∪ 常见繁/日异体 ∪ ASCII 0-9 ∪ `□` = 8887 字**（r8 起）
+  （`gen_font.py --from-source --gb2312-full --big5-common --extra-chars <译名表> --unifont-only`；
+  早期版本只有一级 3755 字，游戏名里的「噩」等二级字会静默留白；r5 扩到 7002 字；
+  r8 再补 Big5 常用区 1885 个繁体字，详见第 12 节）
 - 混排数字：含中文的字符串里 `0-9` 也从这张图集取字形，与汉字同字体/同基线、半角 10px；
   纯拉丁行仍用 IPL 字体
-- 图集：**14 页 × 512×256 I4（64KB/页），512 字/页**，运行时按字绑页
+- 图集：**18 页 × 512×256 I4（64KB/页），512 字/页 = 1152 KB**，运行时按字绑页
+  （早期依次为 8 页 / 512 KB、14 页 / 896 KB）
 - 兜底：字库固定收录 `□`（U+25A1），查不到的码位画 `□` 而非留空
 - 常量：`CJKFONT_DRAW = CJKFONT_CELL = 16`，1:1 像素映射
 
@@ -332,8 +335,11 @@ apploader 解析 ISO9660 的 Boot Record Volume Descriptor 找到 boot catalog�
 | `iso/swiss-zh(ntsc-j).iso` | `GSWWGL` | 1,470,464 B |
 | `iso/swiss-zh(pal).iso` | `GSWPGL` | 1,470,464 B |
 
-镜像内的 DOL 是 `firmware/swiss.dol`（packed 自解压版，1,076,352 B，
+镜像内的 DOL 是 `firmware/swiss.dol`（r6 时为 packed 自解压版 1,076,352 B，
 DOL 头 2 段、32 B 对齐、entry `0x803381E0`、末段 `0x8043ED60`）。
+**r8 起固件已重编**，新值为 1,106,336 B、entry `0x80348AE0`、末段 `0x80456B80`，
+ISO 为 1,501,184 B；上表大小是当时的历史值，当前校验值一律以
+根目录 `SHA256SUMS.txt` 为准。
 脚本自检 20 项：前 32 KiB 与 hdr 逐字节一致、PVD、catalog 的
 validation/default entry、platform ID 与校验和、boot image 与源 DOL 全文一致、
 目录记录大小、以及模拟 apploader 对 DOL 头做的全部检查（段偏移 ≥ 0x100、
@@ -369,7 +375,57 @@ Wii / WODE / 记忆卡六种常用方式。所有产物装的是同一份 `firmw
 `dol2ipl.py` / `dol2gci.cpp`，与上游工具输出逐字节一致；脚本还会比对
 主 DOL / SDLOADER.BIN / reboot.dol 内嵌的 xz 流，防止把旧版固件打进新包。
 
-✅ 2026-11-10 用户实机反馈：**GCLoader `boot.iso` 已验证可用**。
+✅ 2026-11-10 用户实机反馈：**GCLoader `boot.iso` 已验证可用**（r7 固件）。
 
 ⚠️ 其余五种设备（Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡）
 尚未真机实测，结构与官方 r2119 发布包逐项对齐，等待用户反馈。
+
+## 12. 字库扩到 8887 字与全量重编（v2154-zh-r8，2026-11-10 追加）
+
+### 12.1 报告与诊断
+
+有用户反映「斑鸠」的「鸠」不显示。逐项复核后确认**简体字本身没有缺**：
+
+| 检查 | 结果 |
+|---|---|
+| 简体「鸠」U+9E20 | GB2312 二级字（`f0af`），r5 起 7002 字库已收录，位图 31/32 非零 |
+| 发布固件二进制 | 从 `swiss-wiiload.dol` 大端提取码位数组（7002 项有序，idx 6857）与位图，与 `cjkfont.c` **逐字节一致** |
+| GB2312 全量覆盖 | 6763 字，缺失 0 |
+| 图集页边界 | idx 6857 落在末页，14 页纹理均正常初始化，无越界 |
+
+因此只有两种解释：文件名其实是日版原名「斑**鳩**」的「鳩」U+9CE9（不在 GB2312，
+现版画 `□`），或反馈者仍在跑 r1~r4 的 3771 字旧字库（连简体二级字都没有、且无 `□` 兜底）。
+
+### 12.2 顺带修掉的系统性缺口
+
+`gen_font.py` 的 `EXTRA_VARIANTS` 是手工枚举的，常用繁体字漏得很多：
+Big5 常用区 5401 字里有 **1885 字**未收录；抽 135 个游戏名常见繁体字就缺 31 个
+（鳩、無、雙、實、戰、歐、鋼、賽、達…）。与其再一个字一个字补，不如一次把整个
+常用区纳入。
+
+新增 `--big5-common`，用 Python 内置 `big5` 编解码枚举标准常用区 A440–C67E，
+不依赖外部字表；Unifont 对新增码位 100% 覆盖。生产命令：
+
+```bash
+python source/tools/gen_font.py --from-source --gb2312-full --big5-common \
+    --extra-chars docs/GameCube_中文译名表.md --unifont-only
+```
+
+字库 7002 → **8887 字**，GB2312 全量与 Big5 常用区均 0 缺失；
+图集 14 → **18 页**（896 → 1152 KB），`cjkfont.c` 约 2.5 MB，
+编译后 `.bss` = 0x287150，链接正常。
+
+### 12.3 固件变了，所有产物都要一起换
+
+主 DOL 一变，`build_boot_variants.py` 的同源 xz 校验会拒绝旧的 `SDLOADER.BIN` /
+`reboot.dol`，所以本次是**全链路重编**：
+
+- `make dev` 重编 `cube/swiss`，`make apploader` 重生成 packer 三件套与 `apploader.img`
+  （`build_apploader.py` 12/12 通过，新 SHA `12d86f3c…`）
+- 4 个 ISO 与 6 类启动方式文件全部重生成；Wii 的 `boot.dol` 与两个 GCI 再次与上游
+  `dol2ipl.py` / `dol2gci.exe` 输出**逐字节一致**
+- 20/20 ISO 自检、26/26 生成自检、24/24 只读复核、`sha256sum -c` 19/19、脱敏 0 命中
+
+⚠️ 刚实机验证通过的 GCLoader `boot.iso` 属于 r7 固件；r8 只换了镜像内的 DOL、
+结构与生成方式完全没变，但**严格来说仍建议 GCLoader 用户重测一次 r8 版**。
+升级时 `IPL.dol` 与 `swiss/patches/apploader.img` 必须同时换成 r8 的。

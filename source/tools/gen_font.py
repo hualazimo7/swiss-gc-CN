@@ -19,10 +19,16 @@ Usage:
 Production rule: file names are user data that arrive AFTER the firmware was
 built, so the atlas must cover more than the strings compiled into Swiss.
 --gb2312-full adds GB2312 level 2 (rare-but-real chars such as 噩 / 飙);
---extra-chars folds in any additional text (game name tables, traditional /
-Japanese variants). Whatever is still missing renders as a tofu box instead
-of a silent blank. ASCII digits 0-9 are always included: in mixed strings the
-firmware draws them from this atlas so they match the Hanzi face and baseline.
+--big5-common adds the Big5 common-zone Hanzi so traditional/Japanese game
+titles (e.g. 斑鳩, whose 鳩 U+9CE9 is outside GB2312) render correctly;
+--extra-chars folds in any additional text (game name tables, variants).
+Whatever is still missing renders as a tofu box instead of a silent blank.
+ASCII digits 0-9 are always included: in mixed strings the firmware draws
+them from this atlas so they match the Hanzi face and baseline.
+
+Production command (r8+, 8887 glyphs / 18 atlas pages):
+  python source/tools/gen_font.py --from-source --gb2312-full --big5-common \
+      --extra-chars <game-name-table.md> --unifont-only
 """
 import argparse
 import os
@@ -263,6 +269,29 @@ EXTRA_VARIANTS = (
 )
 
 
+def big5_common_chars():
+    """Big5 常用字区 A440-C67E (5401 码位) 里的 CJK 汉字。
+
+    GB2312 only covers Simplified Chinese. Game titles from JP/TW releases use
+    traditional forms (e.g. Ikaruga is 斑鳩, whose 鳩 U+9CE9 is not in GB2312).
+    Enumerating the standard Big5 common zone is reproducible via Python's
+    built-in big5 codec, so no external character table is needed.
+    """
+    out = set()
+    for hi in range(0xA4, 0xC7):
+        low_bytes = list(range(0x40, 0x7F))
+        if hi < 0xC6:               # C67E is the last common-zone code point
+            low_bytes += list(range(0xA1, 0xFF))
+        for lo in low_bytes:
+            try:
+                ch = bytes((hi, lo)).decode("big5")
+            except UnicodeDecodeError:
+                continue
+            if len(ch) == 1 and 0x4E00 <= ord(ch) <= 0x9FFF:
+                out.add(ord(ch))
+    return out
+
+
 def collect_from_source(src_root=None):
     """Collect every non-ASCII code point used in string literals in the tree.
 
@@ -375,6 +404,9 @@ def main():
     ap.add_argument("--extra-chars", nargs="*", default=[], metavar="FILE",
                     help="extra UTF-8 text files whose non-ASCII characters "
                          "must be in the atlas (game name tables, variants)")
+    ap.add_argument("--big5-common", action="store_true",
+                    help="add the Big5 common-zone Hanzi (traditional/Japanese "
+                         "game titles) on top of GB2312")
     ap.add_argument("--out-dir", default=OUT_DIR)
     ap.add_argument("--font", default=TTF_FONT,
                     help="optional TrueType font with a 16 px bitmap strike; "
@@ -406,6 +438,11 @@ def main():
             print(f"extra chars from {path}: {len(extra)} distinct so far")
         codepoints = sorted(set(codepoints) | extra)
         print(f"charset with extra chars: {len(codepoints)} code points")
+    if args.big5_common:
+        extra = big5_common_chars()
+        codepoints = sorted(set(codepoints) | extra)
+        print(f"charset with Big5 common zone ({len(extra)} Hanzi): "
+              f"{len(codepoints)} code points")
     # Game titles also use traditional / Japanese variants outside GB2312.
     codepoints = sorted(set(codepoints) | {ord(c) for c in EXTRA_VARIANTS
                                            if ord(c) > 0x7F})

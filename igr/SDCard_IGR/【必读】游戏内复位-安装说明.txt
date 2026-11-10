@@ -2,8 +2,8 @@ Swiss 游戏内复位（IGR / Apploader）配套文件
 ==========================================
 
 本包由汉化版 Swiss 源码现场生成，版本标记：*swiss_r2154.dol
-apploader.img SHA-256：d55d5a7df19c0a824de6ef4b38ca65b47be32aceb741fc84f6737b21d7afb66c
-大小：1027200 字节
+apploader.img 的 SHA-256 与文件大小见同目录 SHA256SUMS.txt
+（每次重编固件都会变，请以该清单为准；发布仓库根目录另有完整 SHA256SUMS.txt）。
 
 【安装】
 把本目录下的 swiss 文件夹整个拷贝/合并到 SD 卡根目录，最终路径必须是：

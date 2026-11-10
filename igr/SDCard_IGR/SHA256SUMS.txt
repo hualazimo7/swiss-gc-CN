@@ -1,1 +1,1 @@
-500a9b0e2be484a515f6f28869337ccac3b272a32c5f49f18075600f619b8637  swiss/patches/apploader.img
+12d86f3c101f9ee4f942d7370573c338eb378959f31275781b6c9de5bda314dc  swiss/patches/apploader.img
