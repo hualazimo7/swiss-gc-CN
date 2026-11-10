@@ -21,7 +21,8 @@ built, so the atlas must cover more than the strings compiled into Swiss.
 --gb2312-full adds GB2312 level 2 (rare-but-real chars such as 噩 / 飙);
 --extra-chars folds in any additional text (game name tables, traditional /
 Japanese variants). Whatever is still missing renders as a tofu box instead
-of a silent blank.
+of a silent blank. ASCII digits 0-9 are always included: in mixed strings the
+firmware draws them from this atlas so they match the Hanzi face and baseline.
 """
 import argparse
 import os
@@ -45,6 +46,13 @@ BYTES_PER_GLYPH = 32
 # Always present in the atlas. Drawn whenever cjkfont_lookup() fails, so a
 # missing code point shows up as a visible box rather than an empty gap.
 FALLBACK_CP = 0x25A1  # □
+# ASCII 0-9 are stored in the atlas too. Inside a string that contains CJK,
+# IPLFontWrite.c routes these ten code points through the CJK path so digits
+# use the very same 16x16 Unifont face, weight and baseline as the Hanzi next
+# to them (the IPL ROM digits are a heavier, rounded face and used to read as
+# a different font). Pure Latin strings still use the IPL font unchanged.
+# Unifont keeps narrow glyphs centred at x=4..11, hence the half-width advance.
+ATLAS_DIGITS = tuple(range(0x30, 0x3A))
 # On-screen size of a glyph quad. Kept equal to CELL so the bitmap maps 1:1
 # onto the screen; any upscale makes GX_NEAR repeat whole rows and columns.
 DRAW = 16
@@ -401,6 +409,9 @@ def main():
     # Game titles also use traditional / Japanese variants outside GB2312.
     codepoints = sorted(set(codepoints) | {ord(c) for c in EXTRA_VARIANTS
                                            if ord(c) > 0x7F})
+    # Digits in mixed CJK/Latin strings are drawn from this atlas, not the IPL
+    # font, so they must be present even though collect_charset() drops ASCII.
+    codepoints = sorted(set(codepoints) | set(ATLAS_DIGITS))
     # Guarantee a visible fallback for anything still outside the atlas.
     codepoints = sorted(set(codepoints) | {FALLBACK_CP})
     if not codepoints:

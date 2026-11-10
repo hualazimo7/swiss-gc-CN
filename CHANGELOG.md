@@ -1,5 +1,24 @@
 # 更新记录
 
+## 2026-11-10 — 混排阿拉伯数字改用中文同款点阵字
+
+- 实机反馈：中文游戏名里的数字（如 `忍者神龟3：变异噩梦`）和汉字「字体、位置出入比较大」。
+  旧实现里中文走 16×16 Unifont 点阵，数字仍走 IPL ROM 字体贴图，只做了
+  `LATIN_FIT 0.85` 等比缩小 + quad 底部对齐；字形是另一种粗圆体，基线也不是同一套
+- `gen_font.py` 固定把 ASCII `0-9` 收进字库（6992 → **7002 字**，图集仍 14 页）；
+  `IPLFontWrite.c` 在含中文的字符串里把这 10 个码位改走 CJK 绘制分支：同一字体、
+  同一 16px 网格、同一 `yofs` 基线；Unifont 窄字形在 cell 内居中，故 quad 左移 4px、
+  字宽改为半角 10px
+- 三处绘制分支（`drawString` / `drawStringWithCaret` / `drawStringEllipsis`）与所有
+  宽度计算（`text_advance` / `GetTextSizeInPixels` / `GetCharsThatFitInWidth` /
+  `GetTextScaleToFitInWidth`）统一；顺带修正 `drawStringWithCaret` 按字节而非按码点
+  量宽度导致中文输入框宽度偏大的老问题
+- **纯拉丁字符串不受影响**：时钟、日期、`commit: … · revision: …`、启动信息保持 IPL 字体
+- 实机 wiiload 抓屏对比确认数字由粗圆大字变为细点阵、与汉字同风格同基线；
+  随后写入 SD 卡 `IPL.dol` 与 `swiss/patches/apploader.img`，逐字节回读一致
+- 固件与 IGR 镜像同次重编，`build_apploader.py` 12/12 校验通过；校验值、离线包、
+  README / 安装说明 / 发布包 CHANGELOG 同步
+
 ## 2026-11-10 — 修复中文游戏名缺字（「噩」等二级汉字）
 
 - 实机反馈：`忍者神龟3：变异噩梦` 的「噩」显示为空，画面读成 `变异 梦`。
