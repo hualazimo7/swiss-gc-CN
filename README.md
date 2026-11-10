@@ -27,6 +27,24 @@
 | `tools/` | 可直接使用的构建校验、上传、wiiload、游戏改名工具 |
 | `docs/` | IGR 原理、汉化实现、游戏名中文化的技术记录 |
 
+## 版本历史与下载（不可变发布）
+
+> 已发布的版本**永久保留**：附件与说明不再覆盖、不再改写，每次改动都发一个新 tag。
+> 需要旧版本直接从下表对应 Release 下载即可回滚。规则见
+> [docs/RELEASE_POLICY.md](docs/RELEASE_POLICY.md)。
+
+| 版本 | 日期 | 固件 SHA-256 前 8 位 | 主要变化 |
+|---|---|---|---|
+| [**v2154-zh-r5（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r5) | 2026-11-10 | `1ec622cb` | 中文串里的数字改用点阵（**当前推荐**） |
+| [v2154-zh-r4](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r4) | 2026-11-10 | `777243c4` | 修复中文游戏名缺字，字库扩到 6992 字 |
+| [v2154-zh-r3](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r3) | 2026-11-09 | `7351321f` | 设置里增加背景图切换（关闭 / 1~9） |
+| [v2154-zh-r2](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r2) | 2026-11-09 | `2a52fd27` | 混合字符串内拉丁字形收缩至 0.85 |
+| [v2154-zh-r1](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r1) | 2026-11-09 | `56711059` | 首发 |
+| [v2154-zh](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh) | 2026-11-09 | `1ec622cb` | 最初的 tag，冻结保留以兼容旧链接；内容与 r5 相同 |
+
+⚠️ 升级时 `IPL.dol` 与 `swiss/patches/apploader.img` **必须同时替换成同一版本**，
+只换其一会导致游戏内复位异常。
+
 ## 快速开始
 
 ### 1. 安装固件
@@ -182,8 +200,9 @@ firmware/    正式 DOL（自解压版 + wiiload 版）与安装说明
 igr/         apploader.img、离线 SD 卡包、中文安装说明
 source/      translations/*.tsv、fonts/unifont.hex、tools/、build-config/
 tools/       build_apploader.py / upload_file.py / wiiload.py / swiss_client.py
-             rename_games_cn.py
-docs/        IGR 原理、汉化实现、游戏名中文化、译名表、实机截图
+             rename_games_cn.py / publish_release.py（不可变发布工具）
+docs/        IGR 原理、汉化实现、游戏名中文化、译名表、实机截图、
+             RELEASE_POLICY.md（发布规则）
 ```
 
 ## 附：为什么版本号是 2154，官方却是 2119

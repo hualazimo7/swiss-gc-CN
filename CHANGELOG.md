@@ -1,5 +1,19 @@
 # 更新记录
 
+## 2026-11-10 — 发布方式改为不可变发布，历史版本全部归档
+
+- 早期把每次更新的固件、完整包和 Release 说明反复覆盖到同一个 `v2154-zh`
+  （`--clobber` + `release edit --notes-file`），导致旧版本在 GitHub 上消失、用户无法回滚
+- 现补建 `v2154-zh-r1` ~ `v2154-zh-r5` 五个独立 Release，各 tag 用 `--target` 指向
+  对应的历史 commit；附件为当时实际发布包的原样副本（r2 由 `3354acb` 的 git 树复现）
+- `v2154-zh-r5`（数字点阵版，固件 `1ec622cb`）标为 **Latest**；`v2154-zh` 冻结保留，
+  仅用于兼容论坛帖等已发出的下载链接，以后不再往它上传任何文件
+- 新增 [docs/RELEASE_POLICY.md](docs/RELEASE_POLICY.md)：禁止 `--clobber` /
+  `delete-asset` / 改写已发布说明 / 强推 tag；发错了就发下一个版本
+- 新增 `tools/publish_release.py`：发布前检查本地与远端 tag、已有 Release 和 zip，
+  任一存在即拒绝；支持 `--archive` 原样归档历史包、`--reuse` 两步发布、`--latest=false`
+- README 增加版本历史表，各 Release 说明互相链接
+
 ## 2026-11-10 — 混排阿拉伯数字改用中文同款点阵字
 
 - 实机反馈：中文游戏名里的数字（如 `忍者神龟3：变异噩梦`）和汉字「字体、位置出入比较大」。
