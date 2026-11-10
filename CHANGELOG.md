@@ -1,5 +1,33 @@
 # 更新记录
 
+## 2026-11-10 — 新增 GCLoader 可引导 ISO（固件本体未改动）
+
+- 反馈：GCLoader 等光驱替代设备把 SD 卡上的镜像当真实光盘引导，走
+  IPL → apploader → DOL 链路，**不能直接加载 `.dol`**；此前发布包只有 DOL，
+  这部分用户装不上。原版 Swiss 的发布包里也单独带 `GCLoader/boot.iso`
+- 复刻上游 `Makefile` 的 GCLoader ISO 命令：`mkisofs -R -J -G eltorito-gcode.hdr
+  -no-emul-boot -eltorito-platform PPC -b <dol> -o boot.iso <dol> LICENSE.txt`
+- 新增 `tools/build_gcloader_iso.py`：自动查找 `mkisofs`/`xorrisofs`、
+  自适应老版本缺 `-eltorito-platform PPC` 的情况（生成后修正 El Torito
+  validation entry 的 platform ID 为 1 并重算 16 位校验和）、附 20 项自检
+  （光盘头 / PVD / catalog / DOL 全文 / 目录记录 / apploader 的 DOL 头校验项）
+- 新增 `tools/iso/eltorito-*.hdr`（来自上游 GPL-2.0 源码，各 32 KiB）
+- 产物：`gcloader/boot.iso`（`GSWAGL` 全区，GCLoader 专用）+
+  `iso/swiss-zh(ntsc-u|ntsc-j|pal).iso`（`GSWEGL`/`GSWWGL`/`GSWPGL`），
+  每个 1,470,464 B；镜像内装的是 `firmware/swiss.dol` 同一份 packed DOL
+- 验证：4 个 ISO 均 20/20 自检通过；与官方 `v0.6r2119` 的 `boot.iso` 对照，
+  前 32 KiB 光盘头逐字节相同、boot catalog 同在 LBA 32、DOL 同在 LBA 42；
+  `DolphinTool header` 正确识别。**Dolphin 直接启动官方盘与我们的盘都黑屏**，
+  属模拟器不支持该 apploader，非镜像问题；**GCLoader 真机仍待实测**
+- 文档：`gcloader/使用说明.md` 新增，README / `firmware/安装说明.md` 的方式 C /
+  发布包 CHANGELOG / `SHA256SUMS.txt` 同步，README 修正了原先
+  「`swiss.dol` 可直接给 GCLoader 用」的不准确表述
+- 固件与 `apploader.img` 未重新编译，SHA-256 与 `v2154-zh-r5` 完全相同。
+  按不可变发布规则，本批改动发布为独立 tag `v2154-zh-r6`（Latest），
+  不追加、不覆盖任何已发布 Release；`v2154-zh-r1` ~ `r5` 全部保留可回滚
+- 补 `.gitattributes` 明确声明二进制扩展名与 `SHA256SUMS.txt` 的 LF 行尾，
+  修正发布前检查脚本会漏写 ISO 校验项的问题
+
 ## 2026-11-10 — 发布方式改为不可变发布，历史版本全部归档
 
 - 早期把每次更新的固件、完整包和 Release 说明反复覆盖到同一个 `v2154-zh`

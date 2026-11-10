@@ -1,0 +1,14 @@
+# 二进制产物：禁止任何换行/编码转换，避免跨平台 checkout 损坏镜像
+*.dol   binary
+*.iso   binary
+*.img   binary
+*.hdr   binary
+*.tpl   binary
+*.zip   binary
+*.png   binary
+*.jpg   binary
+*.exe   binary
+*.hex   binary
+
+# 校验清单必须用 LF，否则 sha256sum -c 在 Windows 上读不到文件名
+SHA256SUMS.txt text eol=lf

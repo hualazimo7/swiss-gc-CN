@@ -284,3 +284,65 @@ BSS 30,752 B —— 与官方同构。解压出的载荷中可检索到 `全局�
 ### 9.4 仍未验证
 
 MP3 播放器（卡上无 mp3）、SMB/FTP 浏览（需服务器）、NKit 补丁流程、Wii 平台。
+
+---
+
+## 10. GCLoader 可引导 ISO（2026-11-10 追加）
+
+发布包原先只有 DOL。GCLoader 这类光驱替代设备把 SD 卡上的镜像挂成一张真实光盘，
+主机仍走原厂 IPL 的启动链，**不能直接加载 `.dol`**；上游 Swiss 也因此在发布包里
+单独提供 `GCLoader/boot.iso`。本节补齐汉化版的对应产物。
+
+### 10.1 上游做法与镜像结构
+
+顶层 `Makefile` 的 `build` 目标：
+
+```
+mkisofs -R -J -G buildtools/iso/eltorito-gcode.hdr -no-emul-boot \
+        -eltorito-platform PPC -b swiss_rXXXX.dol \
+        -o dist/GCLoader/boot.iso swiss_rXXXX.dol LICENSE.txt
+```
+
+`-G` 把 32 KiB 头文件原样写进 ISO 前 16 扇区。该头含 GameCube 光盘头
+（`GSWAGL`、`C2339F3D`）、bi2/FST 字段，以及从 0x2440 开始的一段
+`"El Torito" apploader`（内部字符串含 `Invalid validation entry`、
+`Default entry not bootable`、`segment past DOL file size` 等）。
+apploader 解析 ISO9660 的 Boot Record Volume Descriptor 找到 boot catalog，
+校验 validation entry，再按 default entry 给出的 LBA 读 boot image 当 DOL 加载。
+
+因此镜像不是「把 DOL 塞进 ISO9660 文件系统」就够了，
+**El Torito validation entry 的 platform ID 必须是 1（PowerPC）**，
+16 位校验和也必须让 32 字节的 word 和为 0。
+
+### 10.2 本机工具的坑
+
+本机没有 `xorrisofs`，只有 VMware Workstation 附带的
+`mkisofs 2.01-bootcd.ru`，它**不支持 `-eltorito-platform PPC`**，
+默认写 platform ID = 0（x86）、checksum `0x55AA`。
+`tools/build_gcloader_iso.py` 在生成后定位 boot catalog，
+把 platform ID 改成 1，并按 `checksum -= 0x0100` 重算（`0x55AA → 0x54AA`）。
+对照官方 r2119 `boot.iso`：两者 platform ID 与校验和完全一致。
+
+### 10.3 产物与自检
+
+| 文件 | Game ID | 大小 |
+|---|---|---:|
+| `gcloader/boot.iso` | `GSWAGL`（全区，GCLoader 用） | 1,470,464 B |
+| `iso/swiss-zh(ntsc-u).iso` | `GSWEGL` | 1,470,464 B |
+| `iso/swiss-zh(ntsc-j).iso` | `GSWWGL` | 1,470,464 B |
+| `iso/swiss-zh(pal).iso` | `GSWPGL` | 1,470,464 B |
+
+镜像内的 DOL 是 `firmware/swiss.dol`（packed 自解压版，1,076,352 B，
+DOL 头 2 段、32 B 对齐、entry `0x803381E0`、末段 `0x8043ED60`）。
+脚本自检 20 项：前 32 KiB 与 hdr 逐字节一致、PVD、catalog 的
+validation/default entry、platform ID 与校验和、boot image 与源 DOL 全文一致、
+目录记录大小、以及模拟 apploader 对 DOL 头做的全部检查（段偏移 ≥ 0x100、
+32 B 对齐、不越界、地址 < 0x81200000、BSS ≥ 0x80000000、入口在 text 段内）。
+
+与官方镜像对照：boot catalog 同在 LBA 32、DOL 同在 LBA 42、前 32 KiB 完全相同。
+`DolphinTool header` 能识别两张盘；Dolphin 直接启动**官方盘同样黑屏**，
+说明是模拟器不支持该 apploader 路径，与镜像无关。GCLoader 真机待实测。
+
+ISO9660 会写入生成时间戳，同一 DOL 重复生成的 SHA-256 不同属正常，
+以发布包 `SHA256SUMS.txt` 为准。头文件 `tools/iso/eltorito-*.hdr`
+与镜像内固件同属上游 GPL-2.0 材料。

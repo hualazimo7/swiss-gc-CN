@@ -19,12 +19,14 @@
 
 | 内容 | 说明 |
 |---|---|
-| `firmware/swiss.dol` | **自解压正式版**，放 SD 卡 / PicoBoot / GCLoader 等使用 |
+| `firmware/swiss.dol` | **自解压正式版**，SD 卡 / PicoBoot / CubiBoot / WODE 使用；GCLoader 需打成 ISO（见下） |
 | `firmware/swiss-wiiload.dol` | 原始构建，**仅**用于 wiiload 网络推送到已在运行的 Swiss |
+| `gcloader/boot.iso` | **GCLoader 专用可引导镜像**，放 SD 卡根目录并保持文件名 `boot.iso` |
+| `iso/*.iso` | NTSC-U / NTSC-J / PAL 三个区域镜像，供刻盘或其它 ODE 使用 |
 | `igr/apploader.img` | 与上述固件同一份源码产出的 IGR 复位镜像 |
 | `igr/SDCard_IGR/` + `.zip` | 给无网卡用户的离线包，解压到 SD 卡根目录即可 |
 | `source/` | 复现汉化所需的翻译表、字模源文件与构建/校验脚本 |
-| `tools/` | 可直接使用的构建校验、上传、wiiload、游戏改名工具 |
+| `tools/` | 构建校验、ISO 生成、上传、wiiload、游戏改名工具 |
 | `docs/` | IGR 原理、汉化实现、游戏名中文化的技术记录 |
 
 ## 版本历史与下载（不可变发布）
@@ -35,7 +37,8 @@
 
 | 版本 | 日期 | 固件 SHA-256 前 8 位 | 主要变化 |
 |---|---|---|---|
-| [**v2154-zh-r5（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r5) | 2026-11-10 | `1ec622cb` | 中文串里的数字改用点阵（**当前推荐**） |
+| [**v2154-zh-r6（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r6) | 2026-11-10 | `1ec622cb` | 新增 GCLoader 可引导 ISO 与三个区域镜像（**当前推荐**；固件与 r5 相同） |
+| [v2154-zh-r5](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r5) | 2026-11-10 | `1ec622cb` | 中文串里的数字改用点阵 |
 | [v2154-zh-r4](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r4) | 2026-11-10 | `777243c4` | 修复中文游戏名缺字，字库扩到 6992 字 |
 | [v2154-zh-r3](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r3) | 2026-11-09 | `7351321f` | 设置里增加背景图切换（关闭 / 1~9） |
 | [v2154-zh-r2](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r2) | 2026-11-09 | `2a52fd27` | 混合字符串内拉丁字形收缩至 0.85 |
@@ -56,6 +59,27 @@
 - 升级前建议把旧 DOL 改名留一份备份
 
 ⚠️ **不要**把 `swiss-wiiload.dol` 放进 SD 卡启动。原始构建链接在 `0x80003100`，会覆盖 IPL 加载器自身，表现为选完文件立刻黑屏。
+
+### 1.1 GCLoader 用户：用 `boot.iso`，不要用 DOL
+
+GCLoader 把 SD 卡上的镜像当一张真实光盘挂给主机，走的是原厂 IPL → apploader → DOL
+的启动链，**不能直接加载 `.dol`**。原版 Swiss 的发布包里也因此单独带
+`GCLoader/boot.iso`。本包同样提供：
+
+1. 把 [`gcloader/boot.iso`](gcloader/boot.iso) 复制到 GCLoader SD 卡的**根目录**，
+   文件名保持 `boot.iso`（GCLoader 固件固定找这个名字）
+2. 同卡照常放 `swiss/` 目录（含 `patches/apploader.img`）与游戏镜像
+3. 开机自动进入中文 Swiss
+
+镜像里装的就是 `firmware/swiss.dol`（同一次构建的 packed 自解压 DOL），**固件版本与
+本 Release 完全一致**。区域镜像、生成原理、自检与验证状态见
+[`gcloader/使用说明.md`](gcloader/使用说明.md)；自行换 DOL 重新打包用
+`python tools/build_gcloader_iso.py --all`。
+
+> GCLoader 真机尚未实测（开发环境是 PicoLoader / CubiBoot）。镜像已与官方 r2119
+> `boot.iso` 做过结构对照：前 32 KiB 光盘头逐字节相同、boot catalog 与 DOL 的 LBA
+> 一致、El Torito platform ID 与校验和一致。Dolphin 对官方盘同样黑屏，属于模拟器
+> 不支持该启动路径。
 
 ### 2. 安装游戏内复位
 
@@ -83,6 +107,7 @@ SD:\swiss\patches\apploader.img
 | `firmware/swiss.dol` | 1,076,352 B | `1ec622cbb8293b17` |
 | `firmware/swiss-wiiload.dol` | 3,363,296 B | `d11c934b56c727e0` |
 | `igr/apploader.img` | 1,076,128 B | `500a9b0e2be484a5` |
+| `gcloader/boot.iso` | 1,470,464 B | `a9022050d9a68a8f` |
 
 `apploader.img` 的版本标记为 `*swiss_r2154.dol`，与 SD 卡根目录的 `IPL.dol` 内嵌同一份 `executable.xz`。
 
@@ -99,7 +124,8 @@ SD:\swiss\patches\apploader.img
 
 ## 从源码复现
 
-需要 devkitPro / libogc2（PowerPC 交叉工具链）、MSYS2、7z、Python 3。
+需要 devkitPro / libogc2（PowerPC 交叉工具链）、MSYS2、7z、Python 3；生成 ISO 另需
+`mkisofs`（cdrtools）或 `xorrisofs`（xorriso）。
 
 ```bash
 # 1) 准备上游源码，并让环境变量指向它
@@ -119,7 +145,10 @@ bash "$SWISS_GC_REPO/build-local.sh" inc
 # 4) 【关键】每次编译后重新生成 apploader.img，并做 12 项逐级字节校验
 py -3 tools/build_apploader.py --build --repo "$SWISS_GC_REPO"
 
-# 5) 可选：推送到实机并回读比对（需宽带网卡）
+# 5) 生成 GCLoader / 区域 ISO（需要 mkisofs 或 xorrisofs，附带 20 项自检）
+py -3 tools/build_gcloader_iso.py --all
+
+# 6) 可选：推送到实机并回读比对（需宽带网卡）
 py -3 tools/build_apploader.py --upload 192.168.1.2
 py -3 tools/wiiload.py 192.168.1.2 firmware/swiss-wiiload.dol
 ```
@@ -192,15 +221,21 @@ py -3 source/tools/gen_font.py --from-source --gb2312-full \
 - **背景图切换已实机通过**（2026-11-09）：开机按 `BackdropIndex` 加载、设置页内左右键即时换图、缺文件回退内置背景、连续切换 14 次无异常
 - **`A + Z + Start` 复位已真机通过**（2026-11-09）：回到中文 Swiss 主界面，无机器重启；`R + Z + Start` 沿用同一逻辑，未单独按键复测
 - `apploader.img` 写入 SD 卡后 `/get` 回读与本地逐字节一致
+- **GCLoader `boot.iso` 尚未实机验证**：20 项自检通过、与官方 r2119 镜像结构对齐
+  （光盘头、catalog/DOL LBA、platform ID 与校验和）；Dolphin 加载官方盘同样黑屏，
+  属模拟器不支持该 El Torito 启动路径，等待 GCLoader 用户实机确认
 
 ## 目录
 
 ```
 firmware/    正式 DOL（自解压版 + wiiload 版）与安装说明
+gcloader/    GCLoader 用的 boot.iso + 使用说明
+iso/         NTSC-U / NTSC-J / PAL 三个区域镜像
 igr/         apploader.img、离线 SD 卡包、中文安装说明
 source/      translations/*.tsv、fonts/unifont.hex、tools/、build-config/
-tools/       build_apploader.py / upload_file.py / wiiload.py / swiss_client.py
-             rename_games_cn.py / publish_release.py（不可变发布工具）
+tools/       build_apploader.py / build_gcloader_iso.py / upload_file.py / wiiload.py
+             swiss_client.py / rename_games_cn.py / publish_release.py
+tools/iso/   上游 eltorito-*.hdr（生成可引导 ISO 用）
 docs/        IGR 原理、汉化实现、游戏名中文化、译名表、实机截图、
              RELEASE_POLICY.md（发布规则）
 ```
