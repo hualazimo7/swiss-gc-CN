@@ -341,7 +341,8 @@ validation/default entry、platform ID 与校验和、boot image 与源 DOL 全�
 
 与官方镜像对照：boot catalog 同在 LBA 32、DOL 同在 LBA 42、前 32 KiB 完全相同。
 `DolphinTool header` 能识别两张盘；Dolphin 直接启动**官方盘同样黑屏**，
-说明是模拟器不支持该 apploader 路径，与镜像无关。GCLoader 真机待实测。
+说明是模拟器不支持该 apploader 路径，与镜像无关。当时 GCLoader 真机待实测
+（后续 2026-11-10 已实机验证通过，见 r7 章节）。
 
 ISO9660 会写入生成时间戳，同一 DOL 重复生成的 SHA-256 不同属正常，
 以发布包 `SHA256SUMS.txt` 为准。头文件 `tools/iso/eltorito-*.hdr`
@@ -368,4 +369,7 @@ Wii / WODE / 记忆卡六种常用方式。所有产物装的是同一份 `firmw
 `dol2ipl.py` / `dol2gci.cpp`，与上游工具输出逐字节一致；脚本还会比对
 主 DOL / SDLOADER.BIN / reboot.dol 内嵌的 xz 流，防止把旧版固件打进新包。
 
-⚠️ 这六种设备均未真机实测，结构与官方 r2119 发布包逐项对齐，等待用户反馈。
+✅ 2026-11-10 用户实机反馈：**GCLoader `boot.iso` 已验证可用**。
+
+⚠️ 其余五种设备（Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡）
+尚未真机实测，结构与官方 r2119 发布包逐项对齐，等待用户反馈。

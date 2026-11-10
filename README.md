@@ -84,10 +84,11 @@ GCLoader 把 SD 卡上的镜像当一张真实光盘挂给主机，走的是原�
 [`gcloader/使用说明.md`](gcloader/使用说明.md)；自行换 DOL 重新打包用
 `python tools/build_gcloader_iso.py --all`。
 
-> GCLoader 真机尚未实测（开发环境是 PicoLoader / CubiBoot）。镜像已与官方 r2119
-> `boot.iso` 做过结构对照：前 32 KiB 光盘头逐字节相同、boot catalog 与 DOL 的 LBA
-> 一致、El Torito platform ID 与校验和一致。Dolphin 对官方盘同样黑屏，属于模拟器
-> 不支持该启动路径。
+> ✅ **GCLoader 真机已验证可用**（2026-11-10 用户实机反馈）：把 `boot.iso` 放在
+> GCLoader SD 卡根目录可正常启动进入中文 Swiss。此前镜像已与官方 r2119 `boot.iso`
+> 做过结构对照：前 32 KiB 光盘头逐字节相同、boot catalog 与 DOL 的 LBA 一致、
+> El Torito platform ID 与校验和一致。Dolphin 对官方盘同样黑屏，属于模拟器
+> 不支持该启动路径，不能用 Dolphin 的结果判断镜像好坏。
 
 ### 1.2 其它启动方式（Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡）
 
@@ -257,9 +258,10 @@ py -3 source/tools/gen_font.py --from-source --gb2312-full \
 - **背景图切换已实机通过**（2026-11-09）：开机按 `BackdropIndex` 加载、设置页内左右键即时换图、缺文件回退内置背景、连续切换 14 次无异常
 - **`A + Z + Start` 复位已真机通过**（2026-11-09）：回到中文 Swiss 主界面，无机器重启；`R + Z + Start` 沿用同一逻辑，未单独按键复测
 - `apploader.img` 写入 SD 卡后 `/get` 回读与本地逐字节一致
-- **GCLoader `boot.iso` 尚未实机验证**：20 项自检通过、与官方 r2119 镜像结构对齐
+- ✅ **GCLoader `boot.iso` 已真机通过**（2026-11-10 用户实机反馈）：放 GCLoader
+  SD 卡根目录即可启动中文 Swiss。此前 20 项自检通过、与官方 r2119 镜像结构对齐
   （光盘头、catalog/DOL LBA、platform ID 与校验和）；Dolphin 加载官方盘同样黑屏，
-  属模拟器不支持该 El Torito 启动路径，等待 GCLoader 用户实机确认
+  属模拟器不支持该 El Torito 启动路径，不作为判断依据
 - **Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡尚未实机验证**：
   各产物与上游 r2119 发布包结构逐项对齐，Wii 的 DOL 段注入与两个 GCI 另与上游
   `dol2ipl.py` / `dol2gci.exe` 输出逐字节一致；等待各设备用户反馈

@@ -28,8 +28,10 @@
   README / 安装说明 / 发布包 CHANGELOG / SHA256SUMS.txt 同步
 - 固件与 `apploader.img` 未重编，SHA-256 与 r5/r6 完全相同。按不可变发布规则
   另发独立 tag `v2154-zh-r7`（Latest），r1~r6 全部原样保留
-- ⚠️ 这六种设备**均未真机实测**（本机为 PicoLoader / CubiBoot + SD 卡）；
-  结构与官方 r2119 包对齐，等待各设备用户反馈
+- ✅ 2026-11-10 用户实机反馈：**GCLoader `boot.iso` 已验证可用**
+- ⚠️ 其余五种设备（Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡）
+  **尚未真机实测**（本机为 PicoLoader / CubiBoot + SD 卡）；结构与官方 r2119 包
+  对齐，等待各设备用户反馈
 
 ## 2026-11-10 — 新增 GCLoader 可引导 ISO（固件本体未改动）
 
@@ -49,7 +51,8 @@
 - 验证：4 个 ISO 均 20/20 自检通过；与官方 `v0.6r2119` 的 `boot.iso` 对照，
   前 32 KiB 光盘头逐字节相同、boot catalog 同在 LBA 32、DOL 同在 LBA 42；
   `DolphinTool header` 正确识别。**Dolphin 直接启动官方盘与我们的盘都黑屏**，
-  属模拟器不支持该 apploader，非镜像问题；**GCLoader 真机仍待实测**
+  属模拟器不支持该 apploader，非镜像问题；当时 **GCLoader 真机仍待实测**
+  （后续 2026-11-10 已实机验证通过，见上文）
 - 文档：`gcloader/使用说明.md` 新增，README / `firmware/安装说明.md` 的方式 C /
   发布包 CHANGELOG / `SHA256SUMS.txt` 同步，README 修正了原先
   「`swiss.dol` 可直接给 GCLoader 用」的不准确表述
