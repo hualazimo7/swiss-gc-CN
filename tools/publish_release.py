@@ -68,10 +68,16 @@ def guard_tag(tag: str, *, remote: bool) -> None:
 
     if remote:
         # A single call lists everything, so a network failure aborts instead
-        # of silently passing the check.
+        # of silently passing the check.  gh --json keys are camelCase: using
+        # a wrong field name (e.g. .tag_name) yields EMPTY output with exit 0,
+        # which would silently disable this guard -- so an empty list is a hard
+        # failure too (this repo always has published releases).
         r = run(["gh", "release", "list", "--limit", "200",
-                 "--json", "tagName", "--jq", ".[].tag_name"], check=True)
+                 "--json", "tagName", "--jq", ".[].tagName"], check=True)
         existing = {x.strip() for x in r.stdout.splitlines() if x.strip()}
+        if not existing:
+            raise RuntimeError("release guard could not list existing releases "
+                               "-> refusing to publish")
         if tag in existing:
             raise RuntimeError("release %s already exists on GitHub -> pick a NEW tag" % tag)
         tags = git("ls-remote", "--tags", "origin", "refs/tags/" + tag).stdout.strip()
