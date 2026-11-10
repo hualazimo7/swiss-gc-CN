@@ -10,9 +10,18 @@ Glyphs come from a TrueType font that ships an embedded 16 px bitmap strike
 Usage:
   python gen_font.py --text "中文测试"
   python gen_font.py --charset out/charset.txt
-  python gen_font.py --from-source --gb2312        # full production charset
+  python gen_font.py --from-source --gb2312        # level 1 only (legacy)
+  python gen_font.py --from-source --gb2312-full \
+      --extra-chars ../dist/GameCube_中文译名表.md
   python gen_font.py --font C:/Windows/Fonts/simhei.ttf --from-source
   python gen_font.py --unifont-only --from-source  # old thin-stroke fallback
+
+Production rule: file names are user data that arrive AFTER the firmware was
+built, so the atlas must cover more than the strings compiled into Swiss.
+--gb2312-full adds GB2312 level 2 (rare-but-real chars such as 噩 / 飙);
+--extra-chars folds in any additional text (game name tables, traditional /
+Japanese variants). Whatever is still missing renders as a tofu box instead
+of a silent blank.
 """
 import argparse
 import os
@@ -33,6 +42,9 @@ OUT_DIR = str(_env_path("SWISS_GC_GUI", "swiss-gc/cube/swiss/source/gui"))
 
 CELL = 16
 BYTES_PER_GLYPH = 32
+# Always present in the atlas. Drawn whenever cjkfont_lookup() fails, so a
+# missing code point shows up as a visible box rather than an empty gap.
+FALLBACK_CP = 0x25A1  # □
 # On-screen size of a glyph quad. Kept equal to CELL so the bitmap maps 1:1
 # onto the screen; any upscale makes GX_NEAR repeat whole rows and columns.
 DRAW = 16
@@ -203,6 +215,46 @@ def gb2312_level1():
     return chars
 
 
+def gb2312_full():
+    """Both GB2312 levels (6763 chars).
+
+    Level 1 alone covers only the 3755 most common characters. Game names are
+    full of level-2 characters (噩 in 忍者神龟3：变异噩梦, 飙, 鑫, ...), and
+    those are exactly the ones that used to disappear from the file browser.
+    File names are not known at build time, so cover the whole encoding.
+    """
+    chars = set()
+    for b1 in range(0xB0, 0xF8):
+        for b2 in range(0xA1, 0xFF):
+            try:
+                chars.add(bytes([b1, b2]).decode("gb2312"))
+            except UnicodeDecodeError:
+                continue
+    return chars
+
+
+# Traditional / Japanese / variant forms that appear in game titles but live
+# outside GB2312. Shipped in the generator so a plain production build is
+# already safe; append freely and regenerate. Duplicates are harmless.
+EXTRA_VARIANTS = (
+    "惡夢龜龍鳳劍俠傳說戰爭勝敗與會兒萬億臺灣港澳靈寶體國圖書寫電話腦遊戲機"
+    "電視聲樂園島嶼風雲雷電霧門開關間題聞問時間長短寬離歸還進退買賣價格貴賤"
+    "謝歡選決應該結束繼續練習習認識知識語讀聽說計算測驗證確認保護維護復製造"
+    "創設計劃組織管理領導揮監督察發現藝術技術科學研究產銷購買消費投資財務經濟"
+    "貿易貨幣銀行帳戶密碼登錄註冊員資格權限角色職業專家顧問醫師學童婦女家庭"
+    "父母兄弟姊妹親戚朋友夥伴敵對軍隊武器裝備防禦擊傷害治療魔咒技能屬飾服裝"
+    "品道具寶藏財富資源材料礦屬木材皮革布料食物飲料藥毒疾病詛祝福祈禱祭祀"
+    "神聖邪黑暗光明焰流土壤空氣生命死魂精神意識記憶想希望勇氣智慧力量速度"
+    "敏幸運命運預言傳奇史詩冒險旅程探索征服統治王國帝國聯邦部落村莊城鎮首都"
+    "邊境疆土海洋湖泊河山脈森林沙漠草原沼澤洞穴迷宮塔樓城堡宮殿寺廟教堂祭壇"
+    "廢墟遺蹟博物館學院醫院商店市場酒館旅館餐廳食堂廚房臥室客廳陽台花園庭院"
+    "馬廄倉庫工場礦坑碼頭港口機場車站道路橋樑隧道運河鐵路公路街道巷弄廣場"
+    "公園運動競技劇院電影美術展覽體育泳健身遊樂動物植水族"
+    # Japanese shinjitai / kokuji
+    "悪亀竜伝説戦闘仮実写駅鉄桜辺弁円済広毎歩黒白青赤緑黄紫灰茶色匂峠畑込々〆"
+)
+
+
 def collect_from_source(src_root=None):
     """Collect every non-ASCII code point used in string literals in the tree.
 
@@ -265,7 +317,8 @@ def write_c(codepoints, bitmaps, header_path, source_path):
         fh.write(f"#define CJKFONT_PAGE_H    {PAGE_H}\n")
         fh.write(f"#define CJKFONT_COLS      {COLS}\n")
         fh.write(f"#define CJKFONT_PER_PAGE  {PER_PAGE}\n")
-        fh.write(f"#define CJKFONT_PAGES     {page_count(n)}\n\n")
+        fh.write(f"#define CJKFONT_PAGES     {page_count(n)}\n")
+        fh.write(f"#define CJKFONT_FALLBACK_GLYPH {codepoints.index(FALLBACK_CP)}\n\n")
         fh.write("extern const unsigned int  cjkfont_codepoints[CJKFONT_COUNT];\n")
         fh.write("extern const unsigned char cjkfont_bitmaps[CJKFONT_COUNT * CJKFONT_BYTES];\n\n")
         fh.write("/* binary search; returns glyph index or -1 */\n")
@@ -307,8 +360,13 @@ def main():
     ap.add_argument("--from-source", action="store_true",
                     help="take the charset from the strings already in the source tree")
     ap.add_argument("--gb2312", action="store_true",
-                    help="also include GB2312 level 1 so dynamic text "
-                         "(file names) can be drawn")
+                    help="also include GB2312 level 1 (legacy, 3755 chars)")
+    ap.add_argument("--gb2312-full", action="store_true",
+                    help="include both GB2312 levels (6763 chars) for arbitrary "
+                         "Simplified Chinese file names")
+    ap.add_argument("--extra-chars", nargs="*", default=[], metavar="FILE",
+                    help="extra UTF-8 text files whose non-ASCII characters "
+                         "must be in the atlas (game name tables, variants)")
     ap.add_argument("--out-dir", default=OUT_DIR)
     ap.add_argument("--font", default=TTF_FONT,
                     help="optional TrueType font with a 16 px bitmap strike; "
@@ -328,6 +386,23 @@ def main():
         extra = sorted(ord(c) for c in gb2312_level1())
         codepoints = sorted(set(codepoints) | set(extra))
         print(f"charset with GB2312 level 1: {len(codepoints)} code points")
+    if args.gb2312_full:
+        extra = sorted(ord(c) for c in gb2312_full())
+        codepoints = sorted(set(codepoints) | set(extra))
+        print(f"charset with GB2312 level 1+2: {len(codepoints)} code points")
+    if args.extra_chars:
+        extra = set()
+        for path in args.extra_chars:
+            with open(path, encoding="utf-8", errors="replace") as fh:
+                extra.update(ord(ch) for ch in fh.read() if ord(ch) > 0x7F)
+            print(f"extra chars from {path}: {len(extra)} distinct so far")
+        codepoints = sorted(set(codepoints) | extra)
+        print(f"charset with extra chars: {len(codepoints)} code points")
+    # Game titles also use traditional / Japanese variants outside GB2312.
+    codepoints = sorted(set(codepoints) | {ord(c) for c in EXTRA_VARIANTS
+                                           if ord(c) > 0x7F})
+    # Guarantee a visible fallback for anything still outside the atlas.
+    codepoints = sorted(set(codepoints) | {FALLBACK_CP})
     if not codepoints:
         print("empty charset")
         return 1

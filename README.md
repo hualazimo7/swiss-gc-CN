@@ -62,9 +62,9 @@ SD:\swiss\patches\apploader.img
 
 | 文件 | 大小 | SHA-256（前 16 位） |
 |---|---:|---|
-| `firmware/swiss.dol` | 1,028,608 B | `7351321f673f3836` |
-| `firmware/swiss-wiiload.dol` | 3,247,008 B | `07abaa443cfd8b38` |
-| `igr/apploader.img` | 1,028,384 B | `54ddd42f11fa637d` |
+| `firmware/swiss.dol` | 1,076,992 B | `777243c43e40f823` |
+| `firmware/swiss-wiiload.dol` | 3,362,848 B | `178014149cf453c7` |
+| `igr/apploader.img` | 1,076,768 B | `feb9ebb3c3124969` |
 
 `apploader.img` 的版本标记为 `*swiss_r2154.dol`，与 SD 卡根目录的 `IPL.dol` 内嵌同一份 `executable.xz`。
 
@@ -124,6 +124,28 @@ py -3 tools/rename_games_cn.py --rollback             # 一键还原
 ⚠️ Swiss 文件浏览器会持有**当前目录**内所有文件的 FatFs 句柄，导致该目录里任何 `/rename` 返回 `FR_LOCKED(16)`。执行前必须先把 `recent.ini` 的 `Recent_0` 临时指向别的目录并重启 Swiss，让它停在别的目录。完整步骤见 [`docs/游戏名中文化.md`](docs/游戏名中文化.md)。
 
 `docs/GameCube_中文译名表.md` 是一次实机批量改名的 56 条对照记录，`docs/screen-cn.png` 是改名后的实机画面。
+
+### 中文字库覆盖（2026-11-10 修复）
+
+曾收到实机反馈：`忍者神龟3：变异噩梦` 里「噩」显示为空，看起来像 `变异 梦`。
+根因不是渲染：旧字库只收 **GB2312 一级 3755 字 + 界面译文用字**（共 3771 字），
+而游戏文件名是固件编译之后才由用户改的，「噩 / 飙 / 鑫」这类**二级字**没进字库；
+查不到字形时旧代码直接跳过绘制、字宽照算，于是留下一个字宽的空白。
+
+现在字库共 **6992 字**：GB2312 全量（一级+二级 6763 字）∪ 源码用字 ∪ 中文译名表
+∪ 常见繁体/日文异体字，并固定收录一个 `□` 占位符。任何仍不在库内的码位都会画成
+`□`，不再静默留白。代价：图集 8→14 页（512 KB→896 KB 常驻），DOL 增大约 113 KB。
+
+发布前自查 / 自行扩字：
+
+```bash
+py -3 source/tools/check_glyphs.py --extra docs/GameCube_中文译名表.md
+py -3 source/tools/gen_font.py --from-source --gb2312-full \
+    --extra-chars docs/GameCube_中文译名表.md --unifont-only
+```
+
+新字加进 `gen_font.py` 的 `EXTRA_VARIANTS` 或用 `--extra-chars` 传入，重新生成
+`cjkfont.c/.h` 后编译即可。**记得同时重跑 `build_apploader.py`**，固件与 IGR 镜像必须同次构建。
 
 ## 背景图切换（设置 → 界面设置 2/6 → 背景图）
 

@@ -7,8 +7,14 @@ Missing glyphs render as nothing at all, which is easy to miss by eye.
 
 Exit code 1 if anything is missing (and prints the exact file:line).
 
-Usage: python tools/check_glyphs.py
+File names are NOT in the source tree, so pass any dynamic text (game name
+tables, user-provided titles) with --extra to check those too.
+
+Usage:
+  python tools/check_glyphs.py
+  python tools/check_glyphs.py --extra ../dist/GameCube_中文译名表.md
 """
+import argparse
 import os
 import re
 import sys
@@ -33,7 +39,7 @@ STR_RE = re.compile(r'"(?:\\.|[^"\\])*"')
 def shipped_codepoints():
     txt = open(CJKFONT_C, encoding="utf-8").read()
     head = txt.split("cjkfont_bitmaps")[0]
-    return set(int(x, 16) for x in re.findall(r"0x([0-9A-Fa-f]{4}),", head))
+    return set(int(x, 16) for x in re.findall(r"0x([0-9A-Fa-f]{4,6}),", head))
 
 
 def used_codepoints():
@@ -57,8 +63,21 @@ def used_codepoints():
 
 
 def main():
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--extra", nargs="*", default=[], metavar="FILE",
+                    help="extra UTF-8 text whose characters must also have "
+                         "glyphs (e.g. a Chinese game name table)")
+    args = ap.parse_args()
+
     shipped = shipped_codepoints()
     used = used_codepoints()
+    for path in args.extra:
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            for ch in fh.read():
+                cp = ord(ch)
+                if cp > 0xFF and cp != 0xFFFD:
+                    used.setdefault(cp, (ch, os.path.basename(path), 0))
 
     # Only code points above 0xFF need a CJK glyph: the IPL ROM font already
     # covers 0x20..0xFF, so Latin-1 (e.g. "Pok\xe9mon") renders through it.
@@ -73,8 +92,9 @@ def main():
     print(f"MISSING {len(missing)} glyph(s):")
     for cp, (ch, rel, line) in sorted(missing.items()):
         print(f"  U+{cp:04X} {ch!r:6}  {rel}:{line}")
-    print("\nAdd them to the charset and regenerate:")
-    print("  python tools/gen_font.py --text \"...\"   (include the chars above)")
+    print("\nRegenerate with the missing text included:")
+    print("  python tools/gen_font.py --from-source --gb2312-full "
+          "--extra-chars <文件> --unifont-only")
     return 1
 
 
