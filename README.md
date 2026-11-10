@@ -23,11 +23,18 @@
 | `firmware/swiss-wiiload.dol` | 原始构建，**仅**用于 wiiload 网络推送到已在运行的 Swiss |
 | `gcloader/boot.iso` | **GCLoader 专用可引导镜像**，放 SD 卡根目录并保持文件名 `boot.iso` |
 | `iso/*.iso` | NTSC-U / NTSC-J / PAL 三个区域镜像，供刻盘或其它 ODE 使用 |
+| `ActionReplay/` | Action Replay 用 `AUTOEXEC.DOL` + 同批 `SDLOADER.BIN` |
+| `FlippyDrive/` | FlippyDrive 的 `EXTRACT_TO_ROOT.zip` → `boot.dol` |
+| `WiikeyFusion/` | `.fzn` 固件 / `.fzn.fw` 恢复固件 / Recovery ISO（WASP Fusion 同用） |
+| `Wii/` | Wii Homebrew Channel 用的 `apps/swiss-gc/boot.dol` 离线包 |
+| `WODE/` | WODE extcfg 可引导 ISO |
+| `MemoryCard/` | 记忆卡存档漏洞用的 `boot.gci` / `xeno.gci` |
 | `igr/apploader.img` | 与上述固件同一份源码产出的 IGR 复位镜像 |
 | `igr/SDCard_IGR/` + `.zip` | 给无网卡用户的离线包，解压到 SD 卡根目录即可 |
+| `Licenses/` | 上游第三方依赖的许可文本 |
 | `source/` | 复现汉化所需的翻译表、字模源文件与构建/校验脚本 |
-| `tools/` | 构建校验、ISO 生成、上传、wiiload、游戏改名工具 |
-| `docs/` | IGR 原理、汉化实现、游戏名中文化的技术记录 |
+| `tools/` | 构建校验、ISO 生成、各启动方式打包、上传、wiiload、改名工具 |
+| `docs/` | IGR 原理、各启动方式说明、汉化实现、游戏名中文化的技术记录 |
 
 ## 版本历史与下载（不可变发布）
 
@@ -37,7 +44,8 @@
 
 | 版本 | 日期 | 固件 SHA-256 前 8 位 | 主要变化 |
 |---|---|---|---|
-| [**v2154-zh-r6（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r6) | 2026-11-10 | `1ec622cb` | 新增 GCLoader 可引导 ISO 与三个区域镜像（**当前推荐**；固件与 r5 相同） |
+| [**v2154-zh-r7（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r7) | 2026-11-10 | `1ec622cb` | 补齐 ActionReplay / FlippyDrive / WiikeyFusion / Wii / WODE / 记忆卡六种启动方式（**当前推荐**；固件未变） |
+| [v2154-zh-r6](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r6) | 2026-11-10 | `1ec622cb` | 新增 GCLoader 可引导 ISO 与三个区域镜像 |
 | [v2154-zh-r5](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r5) | 2026-11-10 | `1ec622cb` | 中文串里的数字改用点阵 |
 | [v2154-zh-r4](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r4) | 2026-11-10 | `777243c4` | 修复中文游戏名缺字，字库扩到 6992 字 |
 | [v2154-zh-r3](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r3) | 2026-11-09 | `7351321f` | 设置里增加背景图切换（关闭 / 1~9） |
@@ -81,6 +89,24 @@ GCLoader 把 SD 卡上的镜像当一张真实光盘挂给主机，走的是原�
 > 一致、El Torito platform ID 与校验和一致。Dolphin 对官方盘同样黑屏，属于模拟器
 > 不支持该启动路径。
 
+### 1.2 其它启动方式（Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡）
+
+官方 Swiss 发布包按设备分目录提供不同的引导文件，本包也已补齐。**这些目录里装的是
+同一份汉化固件**，只是包装成各设备能识别的格式：
+
+| 设备 | 用哪个文件 | 放到哪 |
+|---|---|---|
+| Action Replay | `ActionReplay/AUTOEXEC.DOL` + `SDLOADER.BIN` | SD 卡根目录，两个都要 |
+| FlippyDrive | 解压 `FlippyDrive/EXTRACT_TO_ROOT.zip` → `boot.dol` | FlippyDrive SD 卡根目录 |
+| Wiikey / WASP Fusion | `WiikeyFusion/swiss-zh.fzn`（+ `.fzn.fw` / RecoveryISO） | SD 卡根目录，按设备流程刷写 |
+| Wii | 解压 `Wii/EXTRACT_TO_ROOT.zip` → `apps/swiss-gc/boot.dol` | Wii 的 SD 卡根目录，从 HBC 启动 |
+| WODE | `WODE/swiss-zh(wode_extcfg).iso` | 按 WODE extcfg 流程加载 |
+| 记忆卡 | `MemoryCard/boot.gci` / `xeno.gci` | 用 GCMM 等工具写入 GC 记忆卡 |
+
+各文件的细节、刷写风险与真机验证状态见
+[`docs/启动方式文件说明.md`](docs/启动方式文件说明.md)。重新打包用
+`python tools/build_boot_variants.py`（26 项自检，纯 Python，无需 Wii 工具链）。
+
 ### 2. 安装游戏内复位
 
 解压 `igr/SDCard_IGR.zip`，把里面的 `swiss` 文件夹整个合并到 SD 卡根目录，最终路径必须是：
@@ -108,6 +134,11 @@ SD:\swiss\patches\apploader.img
 | `firmware/swiss-wiiload.dol` | 3,363,296 B | `d11c934b56c727e0` |
 | `igr/apploader.img` | 1,076,128 B | `500a9b0e2be484a5` |
 | `gcloader/boot.iso` | 1,470,464 B | `a9022050d9a68a8f` |
+| `ActionReplay/SDLOADER.BIN` | 1,076,096 B | `dfff1109308d72ff` |
+| `WiikeyFusion/swiss-zh.fzn` | 1,900,544 B | `e6ee79daf38e6e82` |
+| `Wii/EXTRACT_TO_ROOT.zip` | 1,554,827 B | `0ff852a9dc7c8a8b` |
+
+全部 19 项二进制产物的完整校验值见 `SHA256SUMS.txt`。
 
 `apploader.img` 的版本标记为 `*swiss_r2154.dol`，与 SD 卡根目录的 `IPL.dol` 内嵌同一份 `executable.xz`。
 
@@ -148,7 +179,12 @@ py -3 tools/build_apploader.py --build --repo "$SWISS_GC_REPO"
 # 5) 生成 GCLoader / 区域 ISO（需要 mkisofs 或 xorrisofs，附带 20 项自检）
 py -3 tools/build_gcloader_iso.py --all
 
-# 6) 可选：推送到实机并回读比对（需宽带网卡）
+# 6) 生成各启动方式专用文件（Action Replay / FlippyDrive / Wiikey Fusion /
+#    Wii / WODE / 记忆卡），26 项自检，纯 Python + 仓库内的引导资产
+py -3 tools/build_boot_variants.py
+py -3 tools/build_boot_variants.py --verify-only
+
+# 7) 可选：推送到实机并回读比对（需宽带网卡）
 py -3 tools/build_apploader.py --upload 192.168.1.2
 py -3 tools/wiiload.py 192.168.1.2 firmware/swiss-wiiload.dol
 ```
@@ -224,6 +260,9 @@ py -3 source/tools/gen_font.py --from-source --gb2312-full \
 - **GCLoader `boot.iso` 尚未实机验证**：20 项自检通过、与官方 r2119 镜像结构对齐
   （光盘头、catalog/DOL LBA、platform ID 与校验和）；Dolphin 加载官方盘同样黑屏，
   属模拟器不支持该 El Torito 启动路径，等待 GCLoader 用户实机确认
+- **Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡尚未实机验证**：
+  各产物与上游 r2119 发布包结构逐项对齐，Wii 的 DOL 段注入与两个 GCI 另与上游
+  `dol2ipl.py` / `dol2gci.exe` 输出逐字节一致；等待各设备用户反馈
 
 ## 目录
 
@@ -231,13 +270,22 @@ py -3 source/tools/gen_font.py --from-source --gb2312-full \
 firmware/    正式 DOL（自解压版 + wiiload 版）与安装说明
 gcloader/    GCLoader 用的 boot.iso + 使用说明
 iso/         NTSC-U / NTSC-J / PAL 三个区域镜像
+ActionReplay/  AUTOEXEC.DOL + SDLOADER.BIN
+FlippyDrive/   EXTRACT_TO_ROOT.zip（boot.dol）
+WiikeyFusion/  .fzn / .fzn.fw / RecoveryISO/
+Wii/           EXTRACT_TO_ROOT.zip（apps/swiss-gc/）
+WODE/          wode_extcfg ISO
+MemoryCard/    boot.gci / xeno.gci
 igr/         apploader.img、离线 SD 卡包、中文安装说明
+Licenses/    上游第三方依赖许可文本
 source/      translations/*.tsv、fonts/unifont.hex、tools/、build-config/
-tools/       build_apploader.py / build_gcloader_iso.py / upload_file.py / wiiload.py
-             swiss_client.py / rename_games_cn.py / publish_release.py
+tools/       build_apploader.py / build_gcloader_iso.py / build_boot_variants.py /
+             upload_file.py / wiiload.py / swiss_client.py /
+             rename_games_cn.py / publish_release.py
 tools/iso/   上游 eltorito-*.hdr（生成可引导 ISO 用）
-docs/        IGR 原理、汉化实现、游戏名中文化、译名表、实机截图、
-             RELEASE_POLICY.md（发布规则）
+tools/boot/  各启动方式的引导资产与来源说明
+docs/        IGR 原理、各启动方式说明、汉化实现、游戏名中文化、译名表、
+             实机截图、RELEASE_POLICY.md（发布规则）
 ```
 
 ## 附：为什么版本号是 2154，官方却是 2119

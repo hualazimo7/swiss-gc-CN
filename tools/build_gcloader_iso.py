@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-build_gcloader_iso.py — 把 Swiss 汉化版 DOL 打包成 GCLoader 可启动的 ISO。
+build_gcloader_iso.py — 把 Swiss 汉化版 DOL 打包成可启动的 GameCube ISO。
+
+除 GCLoader / 三个区域 ISO 外，同一套流程也用于 WODE (`eltorito-wode.hdr`)
+与 Wiikey Fusion (`eltorito-wkf.hdr`)：`--all` 仍只生成常用 4 个，
+`--all-variants` 生成全部 6 个，`--region wode|wkf` 可单独生成。
+各启动方式的完整组装由 tools/build_boot_variants.py 负责。
 
 上游 Swiss 的 Makefile 就是这么生成 GCLoader/boot.iso 的：
 
@@ -63,7 +68,13 @@ REGIONS = {
     "ntsc-u": ("eltorito-u.hdr",    b"GSWEGL", "iso/swiss-zh(ntsc-u).iso"),
     "ntsc-j": ("eltorito-j.hdr",    b"GSWWGL", "iso/swiss-zh(ntsc-j).iso"),
     "pal":    ("eltorito-e.hdr",    b"GSWPGL", "iso/swiss-zh(pal).iso"),
+    "wode":   ("eltorito-wode.hdr", b"GWDPCF", "wode/swiss-zh(wode_extcfg).iso"),
+    "wkf":    ("eltorito-wkf.hdr",  b"GSWAGL", "wiikeyfusion/swiss-zh.fzn"),
 }
+
+# --all 保持原来的「4 个常用 ISO」语义；WODE/WKF 由 --region 单独生成，
+# 或由 build_boot_variants.py 组装成 .fzn / extcfg ISO。
+BASE_REGIONS = ("gcode", "ntsc-u", "ntsc-j", "pal")
 
 
 def le32(buf: bytes, off: int) -> int:
@@ -343,6 +354,8 @@ def main() -> int:
     ap.add_argument("--out", type=Path, help="仅生成单个 ISO 到指定路径")
     ap.add_argument("--region", choices=list(REGIONS), default="gcode")
     ap.add_argument("--all", action="store_true", help="生成 GCLoader + NTSC-U/J/PAL 共 4 个 ISO")
+    ap.add_argument("--all-variants", action="store_true",
+                    help="连同 WODE / WiikeyFusion 头一起生成全部 6 个 ISO")
     ap.add_argument("--name", default="swiss-zh.dol", help="光盘内 DOL 文件名")
     ap.add_argument("--mkisofs", help="显式指定 mkisofs/xorrisofs 可执行文件")
     ap.add_argument("--reference", type=Path, help="官方 boot.iso，用于对比布局（可选）")
@@ -359,7 +372,12 @@ def main() -> int:
         print(f"错误：找不到许可证文件 {args.license}", file=sys.stderr)
         return 2
 
-    regions = list(REGIONS) if args.all else [args.region]
+    if args.all_variants:
+        regions = list(REGIONS)
+    elif args.all:
+        regions = list(BASE_REGIONS)
+    else:
+        regions = [args.region]
     if args.out:
         regions = [args.region]
 

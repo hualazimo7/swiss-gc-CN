@@ -1,5 +1,36 @@
 # 更新记录
 
+## 2026-11-10 — 补齐各启动方式专用文件（固件本体未改动，发布为 `v2154-zh-r7`）
+
+- 反馈：官方 r2119 发布包按 JB / ODE 方式分目录（ActionReplay、FlippyDrive、
+  WiikeyFusion、Wii、WODE、MemoryCard、PicoBoot…），此前本包只有
+  DOL / apploader / GCLoader / ISO，其它设备的用户没有现成文件
+- 复刻上游顶层 `Makefile` 的 `build` / `build-AR` / `build-wii` /
+  `recovery-iso` / `build-gci` 目标，新增 `tools/build_boot_variants.py`：
+  以 `firmware/swiss.dol` 与 `tools/boot/` 内同批引导资产为输入，
+  纯 Python 生成全部变体，26 项自检，`--verify-only` 可只读复核
+- 新增目录与产物：
+  - `ActionReplay/AUTOEXEC.DOL`（主 DOL 改名）+ `SDLOADER.BIN`（同批 packer 产物）
+  - `FlippyDrive/EXTRACT_TO_ROOT.zip` → `boot.dol`（store 模式 zip）
+  - `WiikeyFusion/swiss-zh.fzn`（wkf 头 ISO 补齐到 1856K）、
+    `swiss-zh.fzn.fw`、`RecoveryISO/swiss-zh_Recovery.iso`（PAL ISO + 前 32K 恢复引导头）
+  - `Wii/EXTRACT_TO_ROOT.zip` → `apps/swiss-gc/boot.dol`：
+    Wii booter 由本基线源码用 libogc2 `wii_rules` 编译，再注入同批 `reboot.dol`
+  - `WODE/swiss-zh(wode_extcfg).iso`、`MemoryCard/boot.gci` / `xeno.gci`
+  - `Licenses/` 13 份上游第三方许可文本、`tools/boot/` 构建资产与来源说明
+- `tools/build_gcloader_iso.py` 增加 `wode` / `wkf` 两个 El Torito 头与
+  `--all-variants`；`--all` 仍只生成原来 4 个 ISO
+- 验证：26/26 自检通过；Wii 的 DOL 段注入与上游 `dol2ipl.py`、
+  两个 GCI 与上游 `dol2gci.exe` 输出**逐字节一致**；
+  脚本会从主 DOL / SDLOADER.BIN / reboot.dol 提取内嵌 xz 流比对，
+  确保三份产物出自同一次构建，不一致直接拒绝生成
+- 文档：新增 `docs/启动方式文件说明.md`、`tools/boot/README.md`，
+  README / 安装说明 / 发布包 CHANGELOG / SHA256SUMS.txt 同步
+- 固件与 `apploader.img` 未重编，SHA-256 与 r5/r6 完全相同。按不可变发布规则
+  另发独立 tag `v2154-zh-r7`（Latest），r1~r6 全部原样保留
+- ⚠️ 这六种设备**均未真机实测**（本机为 PicoLoader / CubiBoot + SD 卡）；
+  结构与官方 r2119 包对齐，等待各设备用户反馈
+
 ## 2026-11-10 — 新增 GCLoader 可引导 ISO（固件本体未改动）
 
 - 反馈：GCLoader 等光驱替代设备把 SD 卡上的镜像当真实光盘引导，走

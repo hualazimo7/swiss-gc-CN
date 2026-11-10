@@ -5,6 +5,10 @@
 *.hdr   binary
 *.tpl   binary
 *.zip   binary
+*.fzn   binary
+*.fw    binary
+*.gci   binary
+*.bin   binary
 *.png   binary
 *.jpg   binary
 *.exe   binary

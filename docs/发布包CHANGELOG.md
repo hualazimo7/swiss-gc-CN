@@ -346,3 +346,26 @@ validation/default entry、platform ID 与校验和、boot image 与源 DOL 全�
 ISO9660 会写入生成时间戳，同一 DOL 重复生成的 SHA-256 不同属正常，
 以发布包 `SHA256SUMS.txt` 为准。头文件 `tools/iso/eltorito-*.hdr`
 与镜像内固件同属上游 GPL-2.0 材料。
+
+## 11. 补齐各启动方式专用文件（v2154-zh-r7，固件未变）
+
+官方发布包按设备分目录，本版补齐 Action Replay / FlippyDrive / Wiikey Fusion /
+Wii / WODE / 记忆卡六种常用方式。所有产物装的是同一份 `firmware/swiss.dol`，
+只是包装格式不同，详见 `docs/启动方式文件说明.md`。
+
+| 目录 | 产物 | 上游对应目标 |
+|---|---|---|
+| `ActionReplay/` | `AUTOEXEC.DOL` + `SDLOADER.BIN` | `build-AR`（改名 + packer 同批产物） |
+| `FlippyDrive/` | `EXTRACT_TO_ROOT.zip` → `boot.dol` | `build` + `zip -mr0` |
+| `WiikeyFusion/` | `.fzn` / `.fzn.fw` / `RecoveryISO/` | `build`（wkf 头 + 1856K）、`recovery-iso` |
+| `Wii/` | `EXTRACT_TO_ROOT.zip` → `apps/swiss-gc/boot.dol` | `build-wii` + `dol2ipl` |
+| `WODE/` | `swiss-zh(wode_extcfg).iso` | `build`（wode 头） |
+| `MemoryCard/` | `boot.gci` / `xeno.gci` | `build-gci` |
+
+`tools/build_boot_variants.py` 一次生成全部并做 26 项自检，输入全部在仓库内
+（`tools/boot/` 下的引导资产、`tools/iso/` 的 hdr、许可文本），
+`--verify-only` 可只读复核。Wii 的 DOL 段注入与 GCI 组装用纯 Python 复刻了
+`dol2ipl.py` / `dol2gci.cpp`，与上游工具输出逐字节一致；脚本还会比对
+主 DOL / SDLOADER.BIN / reboot.dol 内嵌的 xz 流，防止把旧版固件打进新包。
+
+⚠️ 这六种设备均未真机实测，结构与官方 r2119 发布包逐项对齐，等待用户反馈。
