@@ -61,11 +61,12 @@ python tools/publish_release.py --tag v2154-zh-r6 --notes notes_r6.md \
 打包默认从 `--target` 的 git 树精确复现（禁用 `core.autocrlf`，逐条目与 blob
 校验），因此每个 Release 的附件都能由对应 commit 重新生成。
 
-## 历史归档（2026-11-10 补建）
+## 版本归档
 
 | tag | commit | 固件 | 说明 |
 |---|---|---|---|
-| `v2154-zh-r5` | `d7846d6` | `1ec622cb` | 数字改用点阵（**Latest**） |
+| `v2154-zh-r6` | `3f7ecb4` | `1ec622cb` | 新增 GCLoader 可引导 ISO，固件未变（**Latest**） |
+| `v2154-zh-r5` | `d7846d6` | `1ec622cb` | 数字改用点阵 |
 | `v2154-zh-r4` | `1d4671a` | `777243c4` | 修复中文游戏名缺字，6992 字 |
 | `v2154-zh-r3` | `295ff08` | `7351321f` | 背景图切换（关闭 / 1~9） |
 | `v2154-zh-r2` | `3354acb` | `2a52fd27` | 拉丁字形 0.85 缩放 |
@@ -73,4 +74,6 @@ python tools/publish_release.py --tag v2154-zh-r6 --notes notes_r6.md \
 | `v2154-zh` | — | `1ec622cb` | 旧入口，冻结 |
 
 r1 / r3 / r4 / r5 的附件是当时实际发布包的原样副本；r2 当时未单独留包，
-由 `3354acb` 的 git 树逐字节复现。
+由 `3354acb` 的 git 树逐字节复现。r6 的附件由 `3f7ecb4` 的 git 树生成；
+本表在 r6 发布后补写，属纯文档更新，按规则只更新 `main`，未改动任何已发布
+Release 的附件或说明。
