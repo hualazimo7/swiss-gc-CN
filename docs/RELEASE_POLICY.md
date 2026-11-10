@@ -15,11 +15,13 @@
 1. **禁止覆盖已发布的任何东西**：
    - 禁止 `gh release upload <tag> ... --clobber`
    - 禁止 `gh release delete-asset` / `gh release delete`
-   - 禁止 `gh release edit <tag> --notes-file ...` 改写已发布说明（勘误只允许追加一行，且必须注明日期）
+   - 禁止 `gh release edit <tag> --notes-file ...` 改写已发布说明（勘误写进下一个版本的说明）
    - 禁止 `git tag -f` / 强推已发布 tag
    - 禁止复用同名附件包（每个 tag 的 zip 文件名必须带 tag）
-2. **任何改动都发新 tag**，包括只改文档或只重编固件。`IPL.dol` 与
-   `apploader.img` 来自同一次构建，必须同版本配套，绝不能跨版本混用。
+2. **固件或附件内容一变就发新 tag**，包括只重编固件、只换一张截图。
+   纯文档的补充说明只更新 `main` 即可，**不要回头改已发布 Release 的说明或附件**
+   （所以 `main` 上的文档可能比最新 Release 的 zip 更新一点，属正常）。
+   `IPL.dol` 与 `apploader.img` 来自同一次构建，必须同版本配套，绝不能跨版本混用。
 3. **发错了就发下一个版本**，在新版说明里写明「本版修正 rN 的 XX 问题」，
    旧版保持原样可下载，便于用户回滚或复现问题。
 4. **tag 指向该版本对应的 commit**（`--target`），这样 Release 页面能直接回溯
