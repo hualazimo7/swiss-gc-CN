@@ -65,7 +65,8 @@ python tools/publish_release.py --tag v2154-zh-r6 --notes notes_r6.md \
 
 | tag | commit | 固件 | 说明 |
 |---|---|---|---|
-| `v2154-zh-r8` | `beeae56` | `26d133f3` | 字库扩到 8887 字（Big5 常用繁体），固件全链路重编（**Latest**） |
+| `v2154-zh-r9` | `5abe37b` | `1106948d` | 中文串数字改成与汉字同高的满格点阵，固件全链路重编（**Latest**） |
+| `v2154-zh-r8` | `beeae56` | `26d133f3` | 字库扩到 8887 字（Big5 常用繁体），固件全链路重编 |
 | `v2154-zh-r7` | `75ed299` | `1ec622cb` | 补齐六种启动方式专用文件，固件未变 |
 | `v2154-zh-r6` | `3f7ecb4` | `1ec622cb` | 新增 GCLoader 可引导 ISO，固件未变 |
 | `v2154-zh-r5` | `d7846d6` | `1ec622cb` | 数字改用点阵 |
@@ -77,6 +78,6 @@ python tools/publish_release.py --tag v2154-zh-r6 --notes notes_r6.md \
 
 r1 / r3 / r4 / r5 的附件是当时实际发布包的原样副本；r2 当时未单独留包，
 由 `3354acb` 的 git 树逐字节复现。r6 由 `3f7ecb4`、r7 由 `75ed299`、
-r8 由 `beeae56` 的 git 树生成。
+r8 由 `beeae56`、r9 由 `5abe37b` 的 git 树生成。
 本表在各版本发布后补写，属纯文档更新，按规则只更新 `main`，未改动任何已发布
 Release 的附件或说明。
