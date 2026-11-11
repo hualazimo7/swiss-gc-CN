@@ -21,8 +21,9 @@
 否则 Action Replay / Wii 包里会装进旧版 Swiss。`tools/build_boot_variants.py`
 会从三个文件里各自提取内嵌的 xz 流并比对 SHA-256，不一致就直接拒绝生成。
 
-字库变更同样算固件变更：r8 起 `source/tools/gen_font.py` 要带 `--big5-common`
-重新生成 `cjkfont.c/.h`，然后重编固件 → `make apploader` → 更新本目录资产 →
+字库变更同样算固件变更：`source/tools/gen_font.py` 要带 `--big5-common`
+重新生成 `cjkfont.c/.h`（r9 起十个数字由 `fullsize_digit_bitmaps()` 自动重绘，
+改字形改 `DIGIT_PATHS`），然后重编固件 → `make apploader` → 更新本目录资产 →
 重跑 `build_gcloader_iso.py --all` 与 `build_boot_variants.py`。
 
 在 MSYS2 + devkitPPC + libogc2 环境下（仓库路径需为纯 ASCII）：

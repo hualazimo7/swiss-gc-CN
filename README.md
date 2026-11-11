@@ -44,7 +44,8 @@
 
 | 版本 | 日期 | 固件 SHA-256 前 8 位 | 主要变化 |
 |---|---|---|---|
-| [**v2154-zh-r8（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r8) | 2026-11-10 | `26d133f3` | 字库扩到 8887 字，补齐 Big5 常用繁体/日文汉字（**当前推荐**；固件重编，全部启动方式文件同步更新） |
+| [**v2154-zh-r9（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r9) | 2026-11-11 | `1106948d` | 中文串里的数字改成与汉字同高的满格点阵（**当前推荐**；固件重编，全部启动方式文件同步更新） |
+| [v2154-zh-r8](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r8) | 2026-11-10 | `26d133f3` | 字库扩到 8887 字，补齐 Big5 常用繁体/日文汉字 |
 | [v2154-zh-r7](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r7) | 2026-11-10 | `1ec622cb` | 补齐 ActionReplay / FlippyDrive / WiikeyFusion / Wii / WODE / 记忆卡六种启动方式（固件未变） |
 | [v2154-zh-r6](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r6) | 2026-11-10 | `1ec622cb` | 新增 GCLoader 可引导 ISO 与三个区域镜像 |
 | [v2154-zh-r5](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r5) | 2026-11-10 | `1ec622cb` | 中文串里的数字改用点阵 |
@@ -86,8 +87,8 @@ GCLoader 把 SD 卡上的镜像当一张真实光盘挂给主机，走的是原�
 `python tools/build_gcloader_iso.py --all`。
 
 > ✅ **GCLoader 真机已验证可用**（2026-11-10 用户实机反馈，r7 固件）：把 `boot.iso` 放在
-> GCLoader SD 卡根目录可正常启动进入中文 Swiss。r8 仅更换了镜像内固件、结构未改，
-> 仍建议重测一次。此前镜像已与官方 r2119 `boot.iso`
+> GCLoader SD 卡根目录可正常启动进入中文 Swiss。r8 / r9 都只更换了镜像内固件、
+> 结构未改，仍建议重测一次。此前镜像已与官方 r2119 `boot.iso`
 > 做过结构对照：前 32 KiB 光盘头逐字节相同、boot catalog 与 DOL 的 LBA 一致、
 > El Torito platform ID 与校验和一致。Dolphin 对官方盘同样黑屏，属于模拟器
 > 不支持该启动路径，不能用 Dolphin 的结果判断镜像好坏。
@@ -133,13 +134,13 @@ SD:\swiss\patches\apploader.img
 
 | 文件 | 大小 | SHA-256（前 16 位） |
 |---|---:|---|
-| `firmware/swiss.dol` | 1,106,336 B | `26d133f3af418204` |
-| `firmware/swiss-wiiload.dol` | 3,431,136 B | `85a856ed392cfe08` |
-| `igr/apploader.img` | 1,106,112 B | `12d86f3c101f9ee4` |
-| `gcloader/boot.iso` | 1,501,184 B | `5576d2ea0a9d05ab` |
-| `ActionReplay/SDLOADER.BIN` | 1,106,080 B | `becb62ab28d893e9` |
-| `WiikeyFusion/swiss-zh.fzn` | 1,900,544 B | `b3590a7d764fdf85` |
-| `Wii/EXTRACT_TO_ROOT.zip` | 1,584,811 B | `60c4f0df1d1479b1` |
+| `firmware/swiss.dol` | 1,106,560 B | `1106948dba70f9eb` |
+| `firmware/swiss-wiiload.dol` | 3,431,072 B | `2088ad421f1674b6` |
+| `igr/apploader.img` | 1,106,336 B | `8c1f9d7d16d5616b` |
+| `gcloader/boot.iso` | 1,501,184 B | `70faa8325c677189` |
+| `ActionReplay/SDLOADER.BIN` | 1,106,304 B | `71ca46429599bf9b` |
+| `WiikeyFusion/swiss-zh.fzn` | 1,900,544 B | `11823f875cf32aff` |
+| `Wii/EXTRACT_TO_ROOT.zip` | 1,585,035 B | `4c17b004466ee5cf` |
 
 全部 19 项二进制产物的完整校验值见 `SHA256SUMS.txt`。
 
@@ -232,10 +233,13 @@ r8 起生产命令加 `--big5-common`，字库共 **8887 字**：GB2312 全量 6
 5401 ∪ 源码用字 ∪ 译名表 ∪ 手工异体表 ∪ ASCII 0-9 ∪ `□`。两个字符集均 **0 缺失**，
 图集 **18 页 / 1152 KB** 常驻（比 r7 +256 KB，DOL +29,984 B）。仍不在库内的码位画 `□`。
 
-**混排数字也统一了字体**（2026-11-10）：含中文的字符串里，`0-9` 不再用 IPL ROM 字体，
-而是从同一张 Unifont 图集取字形，与汉字共用 16px 网格、笔画粗细和基线；数字按半角
-宽度（10 px）排版。纯英文/数字行（时钟、commit、revision、启动信息）仍用原版 IPL 字体，
-不受影响。Unifont 的西文数字是 x-height 设计，会比满格汉字略矮，属该字体的正常比例。
+**混排数字在 r9 改成与汉字同高**（2026-11-11）：r5~r8 用的是 Unifont 原字形，数字只占
+10 行高 / 6 列宽，汉字却是 15 行 / 13 列，看起来小一圈。r9 起 `gen_font.py` 用
+`fullsize_digit_bitmaps()` 在同一张 16×16 网格里重绘十个数字：**14 行高、9 列宽、
+1px 笔画**，与汉字同网格、同基线；`IPLFontWrite.c` 的字距从 10 调到 12、quad 不再左移，
+让数字与汉字中心对齐。直接放大 Unifont 位图会把笔画复制成 2px，骨架细化又会削断
+`0` / `7`，所以改用 1px 线段路径重绘；运行时仍是 1:1 纹理映射，**没有 GX 运行时缩放**。
+纯英文/数字行（时钟、commit、revision、启动信息）仍用原版 IPL 字体，不受影响。
 
 发布前自查 / 自行扩字：
 
@@ -245,8 +249,9 @@ py -3 source/tools/gen_font.py --from-source --gb2312-full --big5-common \
     --extra-chars docs/GameCube_中文译名表.md --unifont-only
 ```
 
-常用繁体/日文字已由 `--big5-common` 自动覆盖；个别生僻字仍可加进
-`gen_font.py` 的 `EXTRA_VARIANTS` 或用 `--extra-chars` 传入。重新生成
+常用繁体/日文字已由 `--big5-common` 自动覆盖，十个数字由 `fullsize_digit_bitmaps()`
+（`DIGIT_PATHS` 线段表）生成；个别生僻字仍可加进 `gen_font.py` 的 `EXTRA_VARIANTS`
+或用 `--extra-chars` 传入。重新生成
 `cjkfont.c/.h` 后编译即可。**记得同时重跑 `build_apploader.py`**，固件与 IGR 镜像必须同次构建；
 固件一变，ISO 与全部启动方式文件也要用 `build_boot_variants.py` 重新生成。
 
@@ -276,7 +281,9 @@ py -3 source/tools/gen_font.py --from-source --gb2312-full --big5-common \
   放 GCLoader SD 卡根目录即可启动中文 Swiss。20 项自检通过、与官方 r2119 镜像结构对齐
   （光盘头、catalog/DOL LBA、platform ID 与校验和）；Dolphin 加载官方盘同样黑屏，
   属模拟器不支持该 El Torito 启动路径，不作为判断依据。
-  **r8 换了固件但 ISO 结构与生成方式未变**，仍建议 GCLoader 用户重测一次 r8 版 `boot.iso`
+  **r8 / r9 换了固件但 ISO 结构与生成方式未变**，仍建议 GCLoader 用户重测一次当前版 `boot.iso`
+- **r9 的数字效果**：已用真实字距常量做 PC 精确排版模拟（数字与汉字齐平、笔画一致、
+  字距不挤），并通过固件编译与 26 项产物自检；**实机画面待用户开机后确认**
 - **Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡尚未实机验证**：
   各产物与上游 r2119 发布包结构逐项对齐，Wii 的 DOL 段注入与两个 GCI 另与上游
   `dol2ipl.py` / `dol2gci.exe` 输出逐字节一致；等待各设备用户反馈
