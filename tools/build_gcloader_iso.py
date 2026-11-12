@@ -121,7 +121,13 @@ def find_mkisofs(explicit: str | None = None) -> str:
 
 def run_mkisofs(tool: str, hdr: Path, dol_name: str, out: Path, tmp: Path) -> str:
     """按上游 Makefile 的顺序调用，自适应是否支持 -eltorito-platform PPC。"""
-    base = [tool, "-R", "-J", "-G", winpath(hdr), "-no-emul-boot"]
+    # -no-pad：mkisofs 默认把镜像尾部补到 150 扇区（300 KB）的整数倍，
+    # 那 300 KB 在 ISO9660 里不承载任何数据。r10 起字库由 1bpp 换成 4bpp，
+    # 打包后的自解压 DOL 从 1.06 MB 涨到 1.59 MB，加上填充就会顶破
+    # Wiikey Fusion 的 1856 KB 上限（.fzn 是定长 1856K 闪存镜像，
+    # 超过就只能截断，等于损坏）。去掉填充后 853 扇区 = 1,746,944 B，
+    # 留出约 150 KB 余量；GCLoader / WODE / 三区 ISO 同样受益，体积更小。
+    base = [tool, "-R", "-J", "-G", winpath(hdr), "-no-emul-boot", "-no-pad"]
     tail = ["-b", dol_name, "-o", winpath(out), dol_name, "LICENSE.txt"]
     last = ""
     for extra in (["-eltorito-platform", "PPC"], []):

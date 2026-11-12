@@ -1,5 +1,31 @@
 # 更新记录
 
+## 2026-11-12 — 字体重做：矢量字体灰度反锯齿（发布为 `v2154-zh-r10`）
+
+- 反馈：中文、英文、阿拉伯数字三种字形的观感都差。放大参考截图后确认，官方那套的档次
+  来自**矢量字体 16px 灰度抗锯齿**，不是更精细的点阵；此前的组合是 Unifont 1bpp 汉字
+  + IPL ROM 粗拉丁 + 自绘数字，三套字混在一行里，怎么调都不会协调
+- 字库存储 **1bpp → 4bpp 灰度**（每字 32 → 128 字节），布局即 GX I4 tiling，
+  运行时按 8×8 tile 逐行 memcpy，不再逐像素展开
+- 字体源换成 **Noto Sans SC**（SIL OFL 可分发）：汉字 Medium 16px 满格，
+  拉丁/数字 Bold 18px；**中英数同源同基线**，数字改为比例字宽（新增 `cjkfont_advance[]`）
+- 字符集 8887 → **8972 字**：十个自绘数字换成可打印 ASCII 0x20–0x7E，图集仍 18 页 / 1152 KB；
+  `cjkfont_bitmaps` 284 KB → 1.15 MB，raw DOL 3.36 → 4.30 MB，自解压 DOL 1.06 → 1.59 MB
+- 渲染：`GX_NEAR` → `GX_LINEAR`；删除 `LATIN_FIT` / `ATLAS_DIGIT_*` 分支，统一 `draw_glyph()`；
+  新增 `LATIN_MIN_SCALE 0.75` / `CJK_MIN_SCALE 1.0` 下限（UI 调用点按旧 26px 字体写死 0.45）；
+  导出 `GetEffectiveTextScale()` 修顶栏温度压在日期上；`CJK_BASELINE_NUDGE` 2→4 消除顶栏碎点
+- `gen_font.py`：ASCII 裁切窗口 7→5（数字底边与汉字齐平）、`gjpqy` 降部重采样、
+  `()[]{}` 整体压缩进 16 行；`preflight.py` 改用完整字库参数（原来用 `--gb2312`
+  会把整库覆盖成 4085 字）
+- `build_gcloader_iso.py` 加 `-no-pad`：mkisofs 默认补 300 KB 尾部填充，会顶破
+  Wiikey Fusion 的 1856 KB 上限；ISO 1,501,184 → 1,746,944 B
+- 验证：apploader 12/12、ISO 19/19 ×4、变体 26/26、只读复核 24/24、`sha256sum -c` 19/19、脱敏 0 命中
+- ✅ **实机验证通过**（2026-11-12）：中英混排、中文游戏名、括号、顶栏、容量数字、
+  繁体「斑鳩雙實無測試」，`/overflow` 无溢出记录
+- 按不可变规则另发 `v2154-zh-r10`（Latest），r1~r9 与 `v2154-zh` 全部原样保留；
+  升级时 `IPL.dol` 与 `apploader.img` 必须同时替换，r9 / r10 文件不能混用
+
+
 ## 2026-11-11 — 混排数字改成与汉字同高（发布为 `v2154-zh-r9`）
 
 - 反馈：中文串里的阿拉伯数字「有点小」。逐点阵核对：Unifont 的 `0-9` 只占

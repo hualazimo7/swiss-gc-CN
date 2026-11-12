@@ -44,7 +44,8 @@
 
 | 版本 | 日期 | 固件 SHA-256 前 8 位 | 主要变化 |
 |---|---|---|---|
-| [**v2154-zh-r9（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r9) | 2026-11-11 | `1106948d` | 中文串里的数字改成与汉字同高的满格点阵（**当前推荐**；固件重编，全部启动方式文件同步更新） |
+| [**v2154-zh-r10（Latest）**](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r10) | 2026-11-12 | `45c79728` | 字体重做：矢量字体灰度反锯齿，中文/英文/数字同源（**当前推荐**；固件重编，全部启动方式文件同步更新） |
+| [v2154-zh-r9](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r9) | 2026-11-11 | `1106948d` | 中文串里的数字改成与汉字同高的满格点阵 |
 | [v2154-zh-r8](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r8) | 2026-11-10 | `26d133f3` | 字库扩到 8887 字，补齐 Big5 常用繁体/日文汉字 |
 | [v2154-zh-r7](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r7) | 2026-11-10 | `1ec622cb` | 补齐 ActionReplay / FlippyDrive / WiikeyFusion / Wii / WODE / 记忆卡六种启动方式（固件未变） |
 | [v2154-zh-r6](https://github.com/hualazimo7/swiss-gc-CN/releases/tag/v2154-zh-r6) | 2026-11-10 | `1ec622cb` | 新增 GCLoader 可引导 ISO 与三个区域镜像 |
@@ -134,13 +135,13 @@ SD:\swiss\patches\apploader.img
 
 | 文件 | 大小 | SHA-256（前 16 位） |
 |---|---:|---|
-| `firmware/swiss.dol` | 1,106,560 B | `1106948dba70f9eb` |
-| `firmware/swiss-wiiload.dol` | 3,431,072 B | `2088ad421f1674b6` |
-| `igr/apploader.img` | 1,106,336 B | `8c1f9d7d16d5616b` |
-| `gcloader/boot.iso` | 1,501,184 B | `70faa8325c677189` |
-| `ActionReplay/SDLOADER.BIN` | 1,106,304 B | `71ca46429599bf9b` |
-| `WiikeyFusion/swiss-zh.fzn` | 1,900,544 B | `11823f875cf32aff` |
-| `Wii/EXTRACT_TO_ROOT.zip` | 1,585,035 B | `4c17b004466ee5cf` |
+| `firmware/swiss.dol` | 1,659,648 B | `45c79728df0b0a02` |
+| `firmware/swiss-wiiload.dol` | 4,304,000 B | `1402216e9696045a` |
+| `igr/apploader.img` | 1,659,424 B | `4426995cfa1a2207` |
+| `gcloader/boot.iso` | 1,746,944 B | `79c59d2c4da6de8c` |
+| `ActionReplay/SDLOADER.BIN` | 1,659,392 B | `8bd20ba91f11371d` |
+| `WiikeyFusion/swiss-zh.fzn` | 1,900,544 B | `2199c645a682c498` |
+| `Wii/EXTRACT_TO_ROOT.zip` | 2,138,123 B | `debb6bb45e6fc793` |
 
 全部 19 项二进制产物的完整校验值见 `SHA256SUMS.txt`。
 
@@ -172,7 +173,8 @@ export MSYS_BASH=/c/msys64/usr/bin/bash.exe
 # 2) 应用中文翻译与字模（source/tools/ 下）
 py -3 source/tools/apply_translations.py source/translations/*.tsv
 py -3 source/tools/gen_font.py --from-source --gb2312-full --big5-common \
-    --extra-chars docs/GameCube_中文译名表.md --unifont-only
+    --extra-chars docs/GameCube_中文译名表.md \
+    --font "C:/Windows/Fonts/Noto Sans SC Medium (TrueType).otf"
 py -3 source/tools/preflight.py
 
 # 3) 编译固件
@@ -241,18 +243,42 @@ r8 起生产命令加 `--big5-common`，字库共 **8887 字**：GB2312 全量 6
 `0` / `7`，所以改用 1px 线段路径重绘；运行时仍是 1:1 纹理映射，**没有 GX 运行时缩放**。
 纯英文/数字行（时钟、commit、revision、启动信息）仍用原版 IPL 字体，不受影响。
 
+**r10 换成矢量字体灰度反锯齿**（2026-11-12）：把参考截图放大比对后确认，那种观感来自
+**矢量字体在 16px 下做灰度抗锯齿**，而不是更精细的点阵。r10 因此把字库存储从 1bpp 换成
+**4bpp 灰度**（每字 128 字节，布局就是 GX I4 的 tiling，运行时直接 memcpy 进图集，
+不再逐像素展开），字体源换成 **Noto Sans SC**（SIL OFL，可随包分发）：汉字 Medium 16px
+（墨迹正好满格 16×16），拉丁与数字用 Bold 18px（笔画 2px，与汉字等重），
+中文/英文/数字**同源、同基线**，数字按字体原生比例宽度排版（新增 `cjkfont_advance[]` 字宽表）。
+字符集 8887 → **8972 字**（十个自绘数字换成可打印 ASCII 0x20–0x7E），图集仍 18 页 / 1152 KB，
+`cjkfont_bitmaps` 从 284 KB 涨到 1.15 MB，raw DOL 3.36 → 4.30 MB，自解压 DOL 1.06 → 1.59 MB。
+
+渲染侧配套：纹理采样 `GX_NEAR` → `GX_LINEAR`（1:1 时仍落在像素中心不软化，小字缩放才插值）；
+删掉 `LATIN_FIT 0.85` 与 `ATLAS_DIGIT_*` 这类补丁分支，统一由 `draw_glyph()` 分发；
+UI 调用点按旧 26px IPL 字体写死的 `0.45f` / `0.6f` 在 16px 字库下只剩 7px，因此加了
+`LATIN_MIN_SCALE 0.75` / `CJK_MIN_SCALE 1.0` 下限，并导出 `GetEffectiveTextScale()`
+让手工算宽度的位置（顶栏温度）与真实绘制一致。
+
+调字库时踩到并修掉的四个坑：**数字浮起 2px**（CJK 字形墨迹比数学基线下沉 1px、数字停在
+基线以上 1px，按基线对齐恒差 2px；ASCII 裁切窗口 7→5 抵消）；**`g` 被切成 `σ`**
+（18px 降部超出 16 行格子，x-height 重采样 10→9 行、降部压 2 行贴底，只留 1 行会被
+0.75 缩放插值抹成横线）；**`[` 被裁成 `厂`**（括号整体压进 16 行）；**顶栏每行文字上方的
+破碎点点**（quad 落在半像素：`yofs=7`、`cell_height=26`，0.75 缩放下顶边 = -4.5，
+`CJK_BASELINE_NUDGE` 2→4 即 `yofs` 7→9 后消失）。ISO 生成加 `-no-pad`，去掉 mkisofs
+默认的 150 扇区（300 KB）尾部填充——否则 1.59 MB 的 DOL 会顶破 Wiikey Fusion 的 1856 KB 上限。
+
 发布前自查 / 自行扩字：
 
 ```bash
 py -3 source/tools/check_glyphs.py --extra docs/GameCube_中文译名表.md
 py -3 source/tools/gen_font.py --from-source --gb2312-full --big5-common \
-    --extra-chars docs/GameCube_中文译名表.md --unifont-only
+    --extra-chars docs/GameCube_中文译名表.md \
+    --font "C:/Windows/Fonts/Noto Sans SC Medium (TrueType).otf"
 ```
 
-常用繁体/日文字已由 `--big5-common` 自动覆盖，十个数字由 `fullsize_digit_bitmaps()`
-（`DIGIT_PATHS` 线段表）生成；个别生僻字仍可加进 `gen_font.py` 的 `EXTRA_VARIANTS`
-或用 `--extra-chars` 传入。重新生成
-`cjkfont.c/.h` 后编译即可。**记得同时重跑 `build_apploader.py`**，固件与 IGR 镜像必须同次构建；
+常用繁体/日文字由 `--big5-common` 覆盖，拉丁与数字随可打印 ASCII 段自动带入；
+字体可换成本机任意 Unicode CJK 字体（`--font`），生僻字仍可加进 `gen_font.py` 的
+`EXTRA_VARIANTS` 或用 `--extra-chars` 传入。重新生成 `cjkfont.c/.h` 后编译即可：
+**记得同时重跑 `build_apploader.py`**，固件与 IGR 镜像必须同次构建；
 固件一变，ISO 与全部启动方式文件也要用 `build_boot_variants.py` 重新生成。
 
 ## 背景图切换（设置 → 界面设置 2/6 → 背景图）
@@ -281,9 +307,10 @@ py -3 source/tools/gen_font.py --from-source --gb2312-full --big5-common \
   放 GCLoader SD 卡根目录即可启动中文 Swiss。20 项自检通过、与官方 r2119 镜像结构对齐
   （光盘头、catalog/DOL LBA、platform ID 与校验和）；Dolphin 加载官方盘同样黑屏，
   属模拟器不支持该 El Torito 启动路径，不作为判断依据。
-  **r8 / r9 换了固件但 ISO 结构与生成方式未变**，仍建议 GCLoader 用户重测一次当前版 `boot.iso`
-- **r9 的数字效果**：已用真实字距常量做 PC 精确排版模拟（数字与汉字齐平、笔画一致、
-  字距不挤），并通过固件编译与 26 项产物自检；**实机画面待用户开机后确认**
+  **r8 ~ r10 换了固件但 ISO 结构与生成方式未变**（r10 起去掉尾部填充，体积更小），仍建议 GCLoader 用户重测一次当前版 `boot.iso`
+- **r10 的字体效果已实机验证**（2026-11-12）：中英混排、中文游戏名、全角括号与方括号、
+  列表省略号、顶栏 `commit` / `revision`、容量数字全部正常；繁体「斑鳩雙實無測試」逐字可读；
+  `/overflow` 无溢出记录。改前改后对比见 Release 说明
 - **Action Replay / FlippyDrive / Wiikey Fusion / Wii / WODE / 记忆卡尚未实机验证**：
   各产物与上游 r2119 发布包结构逐项对齐，Wii 的 DOL 段注入与两个 GCI 另与上游
   `dol2ipl.py` / `dol2gci.exe` 输出逐字节一致；等待各设备用户反馈
